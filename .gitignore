@@ -1,0 +1,9 @@
+.DS_STORE
+*.log
+*.log.*
+
+node_modules
+config/local.json
+dist
+coverage
+.idea/
