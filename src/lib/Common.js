@@ -1,5 +1,7 @@
 import { browserHistory } from 'react-router'
 import { load, loaded } from './Events'
+import {registerData} from '../store/data'
+import { connect } from 'react-redux'
 
 const setDocumentTitle = (title) => {
   document.title = title
@@ -46,6 +48,25 @@ var Common = {
   },
   pageInit: () => {
     Common.locationChangeEnd()
+  },
+  pageView: (store, cb, page, data) => {
+    if (data && data.length > 0) {
+      registerData(store, data)
+
+      let mapDispatchtoProps = []
+
+      let mapStateToProps = (state) => {
+        let result = {}
+        for (let i in data){
+          result[i] = state.data[i]
+        }
+        return result
+      }
+
+      cb(null, connect(mapStateToProps, mapDispatchtoProps)(page))
+    } else {
+      cb(null, page)
+    }
   }
 }
 

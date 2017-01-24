@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-export default class Load extends Component {
+class Toast extends Component {
 
   constructor (props) {
     super(props)
@@ -77,3 +77,5 @@ export default class Load extends Component {
     )
   }
 }
+
+export default Toast

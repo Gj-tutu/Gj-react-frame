@@ -38,7 +38,7 @@ webpackConfig.entry = {
 // Bundle Output
 // ------------------------------------
 webpackConfig.output = {
-  filename: `js/[name].[${config.compiler_hash_type}].js`,
+  filename: `[name].[${config.compiler_hash_type}].js`,
   path: paths.dist(),
   publicPath: config.compiler_public_path
 }
@@ -119,16 +119,16 @@ webpackConfig.module.loaders = [
     test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
     loader: 'url',
     query: {
-      limit: 10000,
-      name: 'img/[name].[hash:7].[ext]'
+      limit: 10240,
+      name: `img/[name].[${config.compiler_hash_type}].[ext]`
     }
   },
   {
     test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
     loader: 'url',
     query: {
-      limit: 10000,
-      name: 'fonts/[name].[hash:7].[ext]'
+      limit: 10240,
+      name: `fonts/[name].[${config.compiler_hash_type}].[ext]`
     }
   }
 ]
@@ -184,7 +184,7 @@ webpackConfig.postcss = [
 // http://stackoverflow.com/questions/34133808/webpack-ots-parsing-error-loading-fonts/34133809#34133809
 
 webpackConfig.plugins.push(
-  new ExtractTextPlugin('css/[name].[contenthash].css', {
+  new ExtractTextPlugin(`css/[name].[${config.compiler_hash_type}].css`, {
     allChunks: true
   })
 )

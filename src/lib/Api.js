@@ -1,29 +1,15 @@
-import 'whatwg-fetch'
 import { ApiPath } from './ApiSetting'
 import { load, loaded } from './Events'
+import * as Requrest from 'superagent'
 
 class Api {
 
-  token = ''
-  static api = null
-
-  constructor () {
-  }
-
-  static single () {
-    if (!Api.api) {
-      Api.api = new Api()
-    }
-    return Api.api
-  }
-
-  request (api, data, showLoad = true, showLoaded = true) {
+  static request (api, data, showLoad = true, showLoaded = true) {
     let option = { method: api.method, data: data }
-    return this.handle(api.url, option, showLoad, showLoaded)
+    return Api.handle(api.url, option, showLoad, showLoaded)
   }
 
   static send (url, option) {
-    let request = {}
     let paramList = url.match(/\{.*?\}/g)
     if (paramList && paramList.length > 0) {
       for (let k in paramList) {
@@ -34,31 +20,21 @@ class Api {
         option.data[key] = null
       }
     }
-    request.method = option.method
-    request.headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-    if (!window.Env.isAndroid) {
-      request.headers['Cookie'] = window.document.cookie
-    }
-    if (option.method === 'post') {
-      request.body = JSON.stringify(option.data)
-    }
-    request.credentials = 'include'
-    if (option.method === 'get') {
-      let data = `?`
-      for (let i in option.data) {
-        if (!option.data[i]) continue
-        data = `${data}${i}=${option.data[i]}&`
-      }
-      data = data.substring(0, data.length - 1)
-      url = `${url}${encodeURI(data)}`
-    }
-    return fetch(`${ApiPath}${url}`, request)
+    return new Promise((resolve, reject) => {
+      Requrest(option.method,`${ApiPath}${url}`)
+      .type('application/json')
+      .accept('application/json')
+      .send(option.data).end((err, res) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(res)
+        }
+      })
+    })
   }
 
-  handle (url, option, showLoad = true, showLoaded = true) {
+  static handle (url, option, showLoad = true, showLoaded = true) {
     if (showLoad) load()
     return Api.send(url, option).then((response) => {
       if (response.ok) {

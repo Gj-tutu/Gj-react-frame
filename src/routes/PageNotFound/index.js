@@ -2,9 +2,7 @@ import Common from '../../lib/Common'
 
 export const config = {
   path: '404',
-  name: '该页面不存在',
-  needLogin: false,
-  anyOne: true
+  name: '该页面不存在'
 }
 
 export default (store) => ({
@@ -17,8 +15,8 @@ export default (store) => ({
   },
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
-      const pageView = require('./components').default
-      cb(null, pageView)
+      const page = require('./components').default
+      Common.pageView(store, cb, page)
     })
   }
 })

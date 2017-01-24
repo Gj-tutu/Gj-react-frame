@@ -1,5 +1,5 @@
 // We only need to import the modules necessary for initial render
-import App from '../layouts/App/App'
+import App from '../layouts/App'
 import PageNotFound from './PageNotFound'
 import Home from './home'
 import templateRoute from './template'

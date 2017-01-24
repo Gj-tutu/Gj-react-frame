@@ -14,11 +14,9 @@ export default (store) => ({
   },
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
-      const data = require('../../store/data')
-      const base = require('../../data/base')
-      data.registerData(store, [base])
-      const pageView = require('./containers').default
-      cb(null, pageView)
+      const base = require('../../store/data/base')
+      const page = require('./components').default
+      Common.pageView(store, cb, page, [base])
     })
   }
 })
