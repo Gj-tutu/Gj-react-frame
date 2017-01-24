@@ -38,7 +38,7 @@ webpackConfig.entry = {
 // Bundle Output
 // ------------------------------------
 webpackConfig.output = {
-  filename: `[name].[${config.compiler_hash_type}].js`,
+  filename: `js/[name].[${config.compiler_hash_type}].js`,
   path: paths.dist(),
   publicPath: config.compiler_public_path
 }
@@ -72,7 +72,6 @@ if (__DEV__) {
   webpackConfig.plugins.push(
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
-    new ExtractTextPlugin(`${paths.dist()}[name].[contenthash].css`),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: function (module, count) {
@@ -103,42 +102,52 @@ if (__DEV__) {
 // ------------------------------------
 // Loaders
 // ------------------------------------
+// File loaders
 // JavaScript / JSON
-webpackConfig.module.loaders = [{
-  test: /\.(js|jsx)$/,
-  exclude: /node_modules/,
-  loader: 'babel',
-  query: config.compiler_babel
-}, {
-  test: /\.json$/,
-  loader: 'json'
-}]
+webpackConfig.module.loaders = [
+  {
+    test: /\.(js|jsx)$/,
+    exclude: /node_modules/,
+    loader: 'babel',
+    query: config.compiler_babel
+  },
+  {
+    test: /\.json$/,
+    loader: 'json'
+  },
+  {
+    test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+    loader: 'url',
+    query: {
+      limit: 10000,
+      name: 'img/[name].[hash:7].[ext]'
+    }
+  },
+  {
+    test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+    loader: 'url',
+    query: {
+      limit: 10000,
+      name: 'fonts/[name].[hash:7].[ext]'
+    }
+  }
+]
 
 // ------------------------------------
 // Style Loaders
 // ------------------------------------
 // We use cssnano with the postcss loader, so we tell
 // css-loader not to duplicate minimization.
-const BASE_CSS_LOADER = 'css?sourceMap&-minimize'
-
 webpackConfig.module.loaders.push({
   test: /\.scss$/,
   exclude: null,
-  loaders: [
-    'style',
-    BASE_CSS_LOADER,
-    'postcss',
-    'sass?sourceMap'
-  ]
+  loader: ExtractTextPlugin.extract('style-loader', 'css-loader!sass-loader!postcss-loader')
 })
+
 webpackConfig.module.loaders.push({
   test: /\.css$/,
   exclude: null,
-  loaders: [
-    'style',
-    BASE_CSS_LOADER,
-    'postcss'
-  ]
+  loader: ExtractTextPlugin.extract('style-loader', 'css-loader!postcss-loader')
 })
 
 webpackConfig.sassLoader = {
@@ -163,17 +172,8 @@ webpackConfig.postcss = [
   })
 ]
 
-// File loaders
 /* eslint-disable */
-webpackConfig.module.loaders.push(
-  { test: /\.woff(\?.*)?$/,  loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff' },
-  { test: /\.woff2(\?.*)?$/, loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/font-woff2' },
-  { test: /\.otf(\?.*)?$/,   loader: 'file?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=font/opentype' },
-  { test: /\.ttf(\?.*)?$/,   loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream' },
-  { test: /\.eot(\?.*)?$/,   loader: 'file?prefix=fonts/&name=[path][name].[ext]' },
-  { test: /\.svg(\?.*)?$/,   loader: 'url?prefix=fonts/&name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml' },
-  { test: /\.(png|jpg|gif)$/,    loader: 'url?limit=8192' }
-)
+
 /* eslint-enable */
 
 // ------------------------------------
@@ -182,22 +182,11 @@ webpackConfig.module.loaders.push(
 // when we don't know the public path (we know it only when HMR is enabled [in development]) we
 // need to use the extractTextPlugin to fix this issue:
 // http://stackoverflow.com/questions/34133808/webpack-ots-parsing-error-loading-fonts/34133809#34133809
-if (!__DEV__) {
-  debug('Apply ExtractTextPlugin to CSS loaders.')
-  webpackConfig.module.loaders.filter((loader) =>
-    loader.loaders && loader.loaders.find((name) => /css/.test(name.split('?')[0]))
-  ).forEach((loader) => {
-    const first = loader.loaders[0]
-    const rest = loader.loaders.slice(1)
-    loader.loader = ExtractTextPlugin.extract(first, rest.join('!'))
-    delete loader.loaders
-  })
 
-  webpackConfig.plugins.push(
-    new ExtractTextPlugin('[name].[contenthash].css', {
-      allChunks: true
-    })
-  )
-}
+webpackConfig.plugins.push(
+  new ExtractTextPlugin('css/[name].[contenthash].css', {
+    allChunks: true
+  })
+)
 
 module.exports = webpackConfig
