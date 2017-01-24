@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-let request = require('superagent')
+import * as request from 'superagent'
 
 export default class FileUpload extends Component {
   constructor (props) {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './ScrollTabX.scss'
+import './index.scss'
 import Scroll from '../Scroll'
 
 export default class ScrollTabX extends Component {
@@ -7,7 +7,7 @@ export default class ScrollTabX extends Component {
   constructor (props) {
     super(props)
     let li = props.elementList
-    let elWidth = window.Env.ps2px(props.elementWidth)
+    let elWidth = props.elementWidth
     let totalWidth = li.length * elWidth
     let showWidth = this.props.showWidth
     let elementMap = {}
@@ -24,7 +24,7 @@ export default class ScrollTabX extends Component {
       li: li,
       w: elWidth,
       point: this.props.showId ? elementMap[this.props.showId].point : 0,
-      sW: showWidth ? window.Env.ps2px(this.props.showWidth) : window.Env.width,
+      sW: showWidth ? this.props.showWidth : window.Env.width,
       tW: totalWidth
     }
   }

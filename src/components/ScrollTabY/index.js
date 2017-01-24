@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './ScrollTabY.scss'
+import './index.scss'
 import Scroll from '../Scroll'
 
 export default class ScrollTabY extends Component {
@@ -7,7 +7,7 @@ export default class ScrollTabY extends Component {
   constructor (props) {
     super(props)
     let li = props.elementList
-    let elHeight = window.Env.ps2px(props.elementHeight)
+    let elHeight = props.elementHeight
     let totalHeight = li.length * elHeight
     let showHeight = this.props.showHeight
     let elementMap = {}
@@ -24,7 +24,7 @@ export default class ScrollTabY extends Component {
       li: li,
       h: elHeight,
       point: this.props.showId ? elementMap[this.props.showId].point : 0,
-      sH: showHeight ? window.Env.ps2px(this.props.showHeight) : window.Env.height,
+      sH: showHeight ? this.props.showHeight : window.Env.height,
       tH: totalHeight
     }
   }
