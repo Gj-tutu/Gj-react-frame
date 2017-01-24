@@ -1,6 +1,7 @@
 // We only need to import the modules necessary for initial render
 import App from '../layouts/App/App'
 import PageNotFound from './PageNotFound'
+import Home from './home'
 import templateRoute from './template'
 import Redirect from './PageNotFound/redirect'
 
@@ -20,7 +21,7 @@ export const createRoutes = (store) => {
   return {
     path: '/',
     component: App,
-    indexRoute: Home,
+    indexRoute: Home(store),
     childRoutes: [
       ...routerList,
       PageNotFound(),

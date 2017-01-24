@@ -10,30 +10,17 @@
   "scripts": {
     "clean": "rimraf dist",
     "compile": "better-npm-run compile",
-    "lint": "eslint bin build config server src tests",
-    "lint:fix": "npm run lint -- --fix",
     "start": "better-npm-run start",
     "start:prod": "better-npm-run start:prod",
-    "dev": "better-npm-run dev",
-    "test": "better-npm-run test",
-    "test:dev": "npm run test -- --watch",
     "deploy": "better-npm-run deploy",
     "deploy:test": "better-npm-run deploy:test",
     "deploy:dev": "better-npm-run deploy:dev",
-    "deploy:prod": "better-npm-run deploy:prod",
-    "codecov": "cat coverage/*/lcov.info | codecov"
+    "deploy:prod": "better-npm-run deploy:prod"
   },
   "betterScripts": {
     "compile": {
       "command": "node bin/compile",
       "env": {
-        "DEBUG": "app:*"
-      }
-    },
-    "dev": {
-      "command": "nodemon --exec node bin/server --ignore dist --ignore coverage --ignore tests --ignore src",
-      "env": {
-        "NODE_ENV": "development",
         "DEBUG": "app:*"
       }
     },
@@ -76,13 +63,6 @@
         "NODE_ENV": "production",
         "DEBUG": "app:*"
       }
-    },
-    "test": {
-      "command": "node ./node_modules/karma/bin/karma start build/karma.conf",
-      "env": {
-        "NODE_ENV": "test",
-        "DEBUG": "app:*"
-      }
     }
   },
   "dependencies": {
@@ -93,8 +73,6 @@
     "babel-preset-stage-0": "^6.3.13",
     "babel-runtime": "^6.11.6",
     "better-npm-run": "0.0.11",
-    "body-parser": "^1.15.2",
-    "cookie-parser": "^1.4.3",
     "css-loader": "^0.25.0",
     "cssnano": "^3.7.4",
     "debug": "^2.2.0",
@@ -104,9 +82,9 @@
     "fs-extra": "^0.30.0",
     "halogen": "^0.2.0",
     "html-webpack-plugin": "^2.22.0",
+    "http-proxy-middleware": "^0.17.3",
     "immutable": "^3.8.1",
     "imports-loader": "^0.6.5",
-    "ip": "^1.1.2",
     "json-loader": "^0.5.4",
     "node-sass": "^3.7.0",
     "normalize.css": "^4.1.1",
@@ -119,13 +97,11 @@
     "react-router": "^2.8.0",
     "react-tap-event-plugin": "^2.0.0",
     "redux": "^3.6.0",
-    "redux-form": "^6.1.1",
     "redux-thunk": "^2.0.0",
     "request": "^2.78.0",
     "rimraf": "^2.5.4",
     "sass-loader": "^4.0.0",
     "style-loader": "^0.13.1",
-    "superagent": "^2.3.0",
     "url-loader": "^0.5.6",
     "webpack": "^1.12.14",
     "whatwg-fetch": "^1.0.0",

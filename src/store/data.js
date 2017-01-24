@@ -1,6 +1,5 @@
 const DATA_INIT = 'DATA_INIT'
 
-var Immutable = require('immutable')
 var datas = {}
 var stateList = []
 var initNum = 0
@@ -21,14 +20,14 @@ export function registerData (store, reducers) {
   }
 }
 
-export default function (state = Immutable.Map({}), action) {
+export default function (state = {}, action) {
   if (action.type === DATA_INIT) {
     let num = 0
     for (let k = stateList.length - 1; k >= initNum; k--) {
       let reducer = stateList[k]
-      if (state.get(reducer.key)) {
+      if (state[reducer.key]) {
       } else {
-        state = state.set(reducer.key, reducer.initState)
+        state[reducer.key] = reducer.initState
         num ++
       }
     }
@@ -37,7 +36,7 @@ export default function (state = Immutable.Map({}), action) {
 
   const data = action.data
   if (data) {
-    return state.set(data, datas[data](state.get(data), action))
+    return state[data] = datas[data](state[data], action)
   }
   return state
 }

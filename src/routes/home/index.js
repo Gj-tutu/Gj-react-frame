@@ -1,6 +1,7 @@
-import Common from '../../../lib/Common'
+import Common from '../../lib/Common'
 
 export const config = {
+  path: '/',
   name: '首页'
 }
 
@@ -13,8 +14,8 @@ export default (store) => ({
   },
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
-      const data = require('../../../store/data')
-      const base = require('../../../data/base')
+      const data = require('../../store/data')
+      const base = require('../../data/base')
       data.registerData(store, [base])
       const pageView = require('./containers').default
       cb(null, pageView)

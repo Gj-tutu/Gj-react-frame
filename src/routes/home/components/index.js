@@ -1,9 +1,9 @@
 import React from 'react'
-import Page from '../../../../containers/Page'
+import Page from '../../../containers/Page'
 import './index.scss'
 import { config } from '../index'
 
-export default class TemplateTest extends Page {
+export default class Home extends Page {
 
   constructor (props) {
     super(props, config)
@@ -11,11 +11,11 @@ export default class TemplateTest extends Page {
 
   renderView () {
     return (
-      <div className='template-test'></div>
+      <div className='home'>首页</div>
     )
   }
 }
 
-TemplateTest.propTypes = {
+Home.propTypes = {
   base: React.PropTypes.object.isRequired
 }

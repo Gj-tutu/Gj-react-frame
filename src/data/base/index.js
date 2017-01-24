@@ -1,12 +1,9 @@
 import Api from '../../lib/Api'
 import ApiSetting from '../../lib/ApiSetting'
-import CacheManage from '../../lib/Cache'
 // ------------------------------------
 // Constants
 // ------------------------------------
 export const data = 'base'
-
-var tmpTime = {}
 // ------------------------------------
 // Actions
 // ------------------------------------

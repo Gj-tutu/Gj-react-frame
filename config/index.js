@@ -11,15 +11,34 @@ try {
 
 debug('Creating default configuration.')
 
+
+let env_config = {
+  'development': {
+    server_host: local.host || '',
+    server_port: process.env.PORT || 3000,
+    proxyTable: {}
+  },
+  'test': {
+    server_host: "",
+    server_port: "",
+    proxyTable: {}
+  },
+  'production': {
+    server_host: "",
+    server_port: "",
+    proxyTable: {}
+  }
+}
+
+const NODE_ENV = process.env.NODE_ENV || 'development'
 // ========================================================
 // Default Configuration
 // ========================================================
-const config = {
-  env : process.env.NODE_ENV || 'development',
-
+const config = Object.assign(env_config[NODE_ENV], {
   // ----------------------------------
   // Project Structure
   // ----------------------------------
+  env: NODE_ENV,
   path_base  : path.resolve(__dirname, '..'),
   dir_client : 'src',
   dir_dist   : 'dist',
@@ -30,8 +49,6 @@ const config = {
   // ----------------------------------
   // Server Configuration
   // ----------------------------------
-  server_host : local.host || '', // use string 'localhost' to prevent exposure on local network
-  server_port : process.env.PORT || 3000,
 
   // ----------------------------------
   // Compiler Configuration
@@ -65,7 +82,7 @@ const config = {
     { type : 'text-summary' },
     { type : 'lcov', dir : 'coverage' }
   ]
-}
+})
 
 /************************************************
 -------------------------------------------------
@@ -76,25 +93,13 @@ Edit at Your Own Risk
 -------------------------------------------------
 ************************************************/
 
-let env_config = {
-  'development': {
-    host: `'http://${config.server_host}:${config.server_port}'`
-  },
-  'test': {
-    host: ""
-  },
-  'production': {
-    host: ""
-  }
-}
-
 // ------------------------------------
 // Environment
 // ------------------------------------
 // N.B.: globals added here must _also_ be added to .eslintrc
 config.globals = {
   'process.env'  : {
-    'NODE_ENV' : JSON.stringify(config.env)
+    'NODE_ENV'   : JSON.stringify(config.env)
   },
   'NODE_ENV'     : config.env,
   '__DEV__'      : config.env === 'development',

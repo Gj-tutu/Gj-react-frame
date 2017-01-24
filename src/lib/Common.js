@@ -1,6 +1,5 @@
 import { browserHistory } from 'react-router'
 import { load, loaded } from './Events'
-import { data as user, isLogin, toLogin } from '../data/user/info'
 
 const setDocumentTitle = (title) => {
   document.title = title
