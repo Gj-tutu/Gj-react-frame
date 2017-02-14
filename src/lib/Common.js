@@ -48,17 +48,15 @@ var Common = {
     if (data && data.length > 0) {
       registerData(store, data)
 
-      let mapDispatchtoProps = []
+      let mapDispatchtoProps = option ? option.action : {}
 
       let mapStateToProps = (state) => {
         let result = {}
         for (let i = 0; i < data.length; i++){
           let key = data[i].key
           let name = data[i].option ? "option" : key
-          console.log(key, name, data[i])
           result[name] = state.data[key]
         }
-        console.log(result)
         return result
       }
 
