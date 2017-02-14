@@ -6,7 +6,6 @@ import { config } from '../index'
 export default class Home extends Page {
 
   constructor (props) {
-    console.log(props)
     super(props, config)
   }
 
