@@ -3,12 +3,13 @@ import App from '../layouts/App'
 import PageNotFound from './PageNotFound'
 import Home from './home'
 import templateRoute from './template'
+import userRoute from './user'
 import Redirect from './PageNotFound/redirect'
 
-var routerList = []
+var routerList = [...userRoute]
 
 if (__DEBUG__) {
-  routerList = [...templateRoute]
+  routerList = [...routerList, ...templateRoute]
 }
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -18,13 +19,14 @@ export const createRoutes = (store) => {
   for (let i in routerList) {
     routerList[i] = routerList[i](store)
   }
+
   return {
     path: '/',
     component: App,
     indexRoute: Home(store),
     childRoutes: [
       ...routerList,
-      PageNotFound(),
+      PageNotFound(store),
       Redirect
     ]
   }

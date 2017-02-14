@@ -1,5 +1,10 @@
 
-const ApiSetting = { }
+const ApiSetting = {
+  userLogin: {
+    url: 'user/login',
+    method: 'post'
+  }
+}
 
 export default ApiSetting
 

@@ -1,7 +1,8 @@
 import React from 'react'
 import Page from '../../containers/Page'
-import './index.scss'
-import { config } from '../index'
+import './index.less'
+import { config } from './index'
+import { linkTo } from '../../lib/tools'
 
 export default class Home extends Page {
 
@@ -11,11 +12,7 @@ export default class Home extends Page {
 
   renderView () {
     return (
-      <div className='home'>首页</div>
+      <div className='home' onTouchTap={() => {linkTo('user/login')}}>首页</div>
     )
   }
-}
-
-Home.propTypes = {
-  base: React.PropTypes.object.isRequired
 }

@@ -1,4 +1,4 @@
-import { browserHistory } from 'react-router'
+import {linkTo, goBack} from '../../lib/tools'
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -20,7 +20,7 @@ export function registerCallBack (page, { init, callBack }) {
         callBack
       }
     })
-    browserHistory.push(page)
+    linkTo(page)
   }
 }
 
@@ -33,7 +33,7 @@ export function callBack (result) {
         key,
         type: BASE_CALL_BACK
       })
-      browserHistory.goBack()
+      goBack()
     }
   }
 }

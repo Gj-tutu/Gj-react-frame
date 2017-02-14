@@ -1,8 +1,7 @@
-import { browserHistory } from 'react-router'
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const key = 'not-found-option'
+export const key = 'user-login-option'
 export const option = true
 // ------------------------------------
 // Actions

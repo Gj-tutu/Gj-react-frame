@@ -24,10 +24,11 @@ export default (initialState = {}) => {
   // ======================================================
   // Store Instantiation and HMR Setup
   // ======================================================
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
   const store = createStore(
     makeRootReducer(),
     initialState,
-    compose(
+    composeEnhancers(
       applyMiddleware(...middleware),
       ...enhancers
     )

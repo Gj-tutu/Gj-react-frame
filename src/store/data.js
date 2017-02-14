@@ -1,6 +1,13 @@
+import * as user from './data/user'
+
 const DATA_INIT = 'DATA_INIT'
 
-var dataTable = {}
+var dataTable = {
+  user: user.default
+}
+var initState = {
+  user: user.initState
+}
 var stateList = []
 var initNum = 0
 
@@ -14,13 +21,14 @@ export function registerData (store, reducers) {
     init = true
   }
   if (init) {
+    console.log(reducers)
     store.dispatch({
       type: DATA_INIT
     })
   }
 }
 
-export default function (state = {}, action) {
+export default function (state = initState, action) {
   if (action.type === DATA_INIT) {
     let num = 0
     for (let k = stateList.length - 1; k >= initNum; k--) {

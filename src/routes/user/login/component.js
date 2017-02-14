@@ -3,7 +3,7 @@ import Page from '../../../containers/Page'
 import './index.less'
 import { config } from './index'
 
-export default class TemplateTest extends Page {
+export default class UserLogin extends Page {
 
   constructor (props) {
     super(props, config)
@@ -11,7 +11,7 @@ export default class TemplateTest extends Page {
 
   renderView () {
     return (
-      <div className='template-test'></div>
+      <div className='user-login'>用户登录</div>
     )
   }
 }

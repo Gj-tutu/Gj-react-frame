@@ -1,10 +1,9 @@
 import React from 'react'
 import Page from '../../containers/Page'
-import { withRouter } from 'react-router'
 import { config } from './index'
-import './index.scss'
+import './index.less'
 
-class PageNotFound extends Page {
+export default class PageNotFound extends Page {
 
   constructor (props) {
     super(props, config)
@@ -17,9 +16,3 @@ class PageNotFound extends Page {
     )
   }
 }
-
-PageNotFound.propTypes = {
-  router: React.PropTypes.object.isRequired
-}
-
-export default withRouter(PageNotFound)

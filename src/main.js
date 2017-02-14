@@ -1,6 +1,5 @@
 import Env from './lib/Env'
 window.Env = new Env(window)
-window.Common = require('./lib/Common')
 window.Promise = require('promise')
 
 import React from 'react'

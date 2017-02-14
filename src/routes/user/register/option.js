@@ -1,7 +1,7 @@
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const key = 'home-option'
+export const key = 'user-login-option'
 export const option = true
 // ------------------------------------
 // Actions

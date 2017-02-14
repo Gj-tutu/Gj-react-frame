@@ -4,6 +4,7 @@ import Common from '../lib/Common'
 
 class Page extends Component {
   init = false
+  config = {}
 
   constructor (props, config) {
     super(props)

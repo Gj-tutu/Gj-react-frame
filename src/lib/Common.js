@@ -1,37 +1,31 @@
-import { browserHistory } from 'react-router'
 import { load, loaded } from './Events'
 import {registerData} from '../store/data'
 import { connect } from 'react-redux'
-
-const setDocumentTitle = (title) => {
-  document.title = title
-  if (window.Env.isIos) {
-    var i = document.createElement('iframe')
-    i.src = '/favicon.ico'
-    i.style.display = 'none'
-    i.onload = () => {
-      setTimeout(() => {
-        i.remove()
-      }, 10)
-    }
-    setTimeout(() => {
-      document.body.appendChild(i)
-    }, 500)
-  }
-}
-
-var login = false
+import { setDocumentTitle, replaceLink, linkTo, goBack } from './tools'
+import { isLogin } from '../store/data/user'
 
 var Common = {
   locationChange: (e) => {
-    // if (login) load()
+    load()
   },
   locationChangeEnd: () => {
-    // if (login) loaded(false)
+    loaded(false)
   },
   pageEnter: (config, store, props, replace) => {
+    if (config.needLogin) {
+      if (!isLogin(store)) {
+        setTimeout(() => (linkTo('user/login')), 1)
+      }
+    }
+    if (config.notLogin) {
+      if (isLogin(store)) {
+        goBack()
+      }
+    }
+    setDocumentTitle(config.name || '商家服务平台')
   },
-  pageReplace: (config, location, userInfo) => {
+  pageReplace: (config, location, user) => {
+
   },
   pageLeave: (config, store, props) => {
 
@@ -67,6 +61,6 @@ var Common = {
   }
 }
 
-browserHistory.listen(Common.locationChange)
+window.appEvent.on("locationChange", Common.locationChange)
 
 export default Common

@@ -1,12 +1,13 @@
-import Common from '../../lib/Common'
+import Common from '../../../lib/Common'
 
 export const config = {
-  path: '/',
-  name: '首页',
-  needLogin: true
+  path: 'user/login',
+  name: '登录',
+  notLogin: true
 }
 
 export default (store) => ({
+  path: config.path,
   onEnter: (props, replace) => {
     Common.pageEnter(config, store, props, replace)
   },
@@ -15,7 +16,7 @@ export default (store) => ({
   },
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
-      const base = require('../../store/data/base')
+      const base = require('../../../store/data/base')
       const page = require('./component').default
       const option = require('./option')
       Common.pageView(store, cb, page, option, [base])
