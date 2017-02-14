@@ -7,7 +7,7 @@ import Redirect from './PageNotFound/redirect'
 
 var routerList = []
 
-if (DEBUG) {
+if (__DEBUG__) {
   routerList = [...templateRoute]
 }
 

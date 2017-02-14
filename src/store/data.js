@@ -6,11 +6,11 @@ var initNum = 0
 
 export function registerData (store, reducers) {
   let init = false
-  for (let i in reducers) {
+  for (let i = 0; i < reducers.length; i++) {
     let reducer = reducers[i]
-    if (dataTable[reducer.dataKey]) continue
-    dataTable[reducer.dataKey] = reducer.default
-    stateList.push({ key: reducer.dataKey, initState: reducer.initialState })
+    if (dataTable[reducer.key]) continue
+    dataTable[reducer.key] = reducer.default
+    stateList.push({ key: reducer.key, initState: reducer.initState })
     init = true
   }
   if (init) {
@@ -34,9 +34,9 @@ export default function (state = {}, action) {
     initNum = initNum + num
   }
 
-  const dataKey = action.dataKey
-  if (dataKey) {
-    return state[dataKey] = dataTable[dataKey](state[dataKey], action)
+  let key = action.key
+  if (key) {
+    state[key] = dataTable[key](state[key], action)
   }
   return { ...state }
 }

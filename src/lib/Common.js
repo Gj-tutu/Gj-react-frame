@@ -24,20 +24,10 @@ var login = false
 
 var Common = {
   locationChange: (e) => {
-    let element = window.document.getElementById('app-animation')
-    if (e.action == 'POP') {
-      if (element) {
-        element.className = 'pop'
-      }
-    } else {
-      if (element) {
-        element.className = 'push'
-      }
-    }
-    if (login) load()
+    // if (login) load()
   },
   locationChangeEnd: () => {
-    if (login) loaded(false)
+    // if (login) loaded(false)
   },
   pageEnter: (config, store, props, replace) => {
   },
@@ -49,7 +39,12 @@ var Common = {
   pageInit: () => {
     Common.locationChangeEnd()
   },
-  pageView: (store, cb, page, data) => {
+  pageView: (store, cb, page, option, data) => {
+    if (option) {
+      if (!data) data = []
+      data.push(option)
+    }
+
     if (data && data.length > 0) {
       registerData(store, data)
 
@@ -57,9 +52,13 @@ var Common = {
 
       let mapStateToProps = (state) => {
         let result = {}
-        for (let i in data){
-          result[i] = state.data[i]
+        for (let i = 0; i < data.length; i++){
+          let key = data[i].key
+          let name = data[i].option ? "option" : key
+          console.log(key, name, data[i])
+          result[name] = state.data[key]
         }
+        console.log(result)
         return result
       }
 

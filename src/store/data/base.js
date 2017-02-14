@@ -2,7 +2,7 @@ import { browserHistory } from 'react-router'
 // ------------------------------------
 // Constants
 // ------------------------------------
-const dataKey = 'base'
+export const key = 'base'
 
 const BASE_REGISTER_CALL_BACK = 'BASE_REGISTER_CALL_BACK'
 const BASE_CALL_BACK = 'BASE_CALL_BACK'
@@ -13,7 +13,7 @@ const BASE_CALL_BACK = 'BASE_CALL_BACK'
 export function registerCallBack (page, { init, callBack }) {
   return (dispatch, getState) => {
     dispatch({
-      data,
+      key,
       type: BASE_REGISTER_CALL_BACK,
       payload: {
         init,
@@ -30,7 +30,7 @@ export function callBack (result) {
     if (callBack) {
       dispatch(callBack(result))
       dispatch({
-        data,
+        key,
         type: BASE_CALL_BACK
       })
       browserHistory.goBack()
@@ -58,11 +58,11 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 // Reducer
 // ------------------------------------
-export const initialState = {
+export const initState = {
   pageCallBack: null,
   pageInit: null
 }
-export default function (state = initialState, action) {
+export default function (state = initState, action) {
   const handler = ACTION_HANDLERS[action.type]
   return handler ? handler(state, action) : state
 }

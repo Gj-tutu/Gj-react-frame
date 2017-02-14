@@ -86,13 +86,17 @@ class Env {
   initFunc (window) {
     window.appEvent = new events.EventEmitter()
 
-    window.inArray = (arr, obj) => {
-      if (!(arr instanceof Array)) return -1
-      for (let i in arr) {
-        if (arr[i] == obj) return i
+    Object.defineProperty(Array.prototype, "inArray", {
+      value: function(value) {
+        let _list = Object(this)
+        let _length = _list.length >>> 0;
+        for (let i = 0; i < _length; i++) {
+          if (_list[i] == value) return i
+        }
+        return -1
       }
-      return -1
-    }
+    });
+
     window.setCookie = (name, value, time) => {
       var exp = new Date()
       exp.setTime(exp.getTime() + time * 1000)
