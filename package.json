@@ -8,6 +8,7 @@
     "npm": "^3.0.0"
   },
   "scripts": {
+    "i": "npm i --registry=https://registry.npm.taobao.org",
     "clean": "rimraf dist",
     "compile": "better-npm-run compile",
     "start": "better-npm-run start",
@@ -15,7 +16,8 @@
     "deploy": "better-npm-run deploy",
     "deploy:test": "better-npm-run deploy:test",
     "deploy:dev": "better-npm-run deploy:dev",
-    "deploy:prod": "better-npm-run deploy:prod"
+    "deploy:prod": "better-npm-run deploy:prod",
+    "prod": "npm run i && npm run deploy:prod"
   },
   "betterScripts": {
     "compile": {
