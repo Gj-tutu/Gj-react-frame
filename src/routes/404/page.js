@@ -3,7 +3,7 @@ import Page from '../../containers/Page'
 import { config } from './index'
 import './index.less'
 
-export default class PageNotFound extends Page {
+export default class Error404 extends Page {
 
   constructor (props) {
     super(props, config)
@@ -11,7 +11,7 @@ export default class PageNotFound extends Page {
 
   renderView () {
     return (
-      <div className="pageNotFound">
+      <div className="error-404">
       </div>
     )
   }
