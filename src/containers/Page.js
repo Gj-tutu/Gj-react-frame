@@ -9,7 +9,6 @@ class Page extends Component {
   constructor (props, config) {
     super(props)
     this.init = false
-    this.replace = false
     this.config = config
   }
 

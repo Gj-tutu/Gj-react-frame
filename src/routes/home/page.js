@@ -1,9 +1,10 @@
 import React from 'react'
-import Page from '../../../containers/Page'
+import Page from '../../containers/Page'
 import './index.less'
 import { config } from './index'
+import { linkTo } from '../../lib/tools'
 
-export default class UserLogin extends Page {
+export default class Home extends Page {
 
   constructor (props) {
     super(props, config)
@@ -11,7 +12,7 @@ export default class UserLogin extends Page {
 
   renderView () {
     return (
-      <div className='user-login'>用户登录</div>
+      <div className='home'}>首页</div>
     )
   }
 }

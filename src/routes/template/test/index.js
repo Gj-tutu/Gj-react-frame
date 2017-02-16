@@ -16,7 +16,7 @@ export default (store) => ({
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
       const base = require('../../../store/data/base')
-      const page = require('./component').default
+      const page = require('./page').default
       const option = require('./option')
       Common.pageView(store, cb, page, option, [base])
     })

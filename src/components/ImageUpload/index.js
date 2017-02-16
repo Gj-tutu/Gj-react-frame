@@ -28,11 +28,3 @@ export default class ImageUpload extends Component {
     )
   }
 }
-
-ImageUpload.propTypes = {
-  url: React.PropTypes.string.isRequired,
-  onEnd: React.PropTypes.func.isRequired,
-  onStart: React.PropTypes.func.isRequired,
-  onError: React.PropTypes.func,
-  onProgress: React.PropTypes.func
-}

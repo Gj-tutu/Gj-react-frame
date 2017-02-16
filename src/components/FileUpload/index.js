@@ -75,13 +75,3 @@ export default class FileUpload extends Component {
     )
   }
 }
-
-FileUpload.propTypes = {
-  name: React.PropTypes.string.isRequired,
-  onEnd: React.PropTypes.func.isRequired,
-  onStart: React.PropTypes.func.isRequired,
-  onProgress: React.PropTypes.func,
-  uploadUrl: React.PropTypes.string.isRequired,
-  capture: React.PropTypes.string,
-  accept: React.PropTypes.string
-}

@@ -14,7 +14,6 @@ var Common = {
   pageEnter: (config, store, props, replace) => {
     if (config.needLogin) {
       if (!isLogin(store)) {
-        setTimeout(() => (linkTo('user/login')), 1)
       }
     }
     if (config.notLogin) {
@@ -22,7 +21,6 @@ var Common = {
         goBack()
       }
     }
-    setDocumentTitle(config.name || '商家服务平台')
   },
   pageReplace: (config, location, user) => {
 

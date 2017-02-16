@@ -21,7 +21,6 @@ export function registerData (store, reducers) {
     init = true
   }
   if (init) {
-    console.log(reducers)
     store.dispatch({
       type: DATA_INIT
     })

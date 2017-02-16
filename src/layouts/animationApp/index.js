@@ -15,9 +15,4 @@ const App = ({ children, location }) => (
   </ReactCSSTransitionGroup>
 )
 
-App.propTypes = {
-  children: React.PropTypes.object.isRequired,
-  location: React.PropTypes.object.isRequired
-}
-
 export default App

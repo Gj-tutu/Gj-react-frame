@@ -4,10 +4,6 @@ import { Provider } from 'react-redux'
 import Toast from './Toast'
 
 class AppContainer extends Component {
-  static propTypes = {
-    routes : PropTypes.object.isRequired,
-    store  : PropTypes.object.isRequired
-  }
   constructor (props) {
     super(props)
   }
