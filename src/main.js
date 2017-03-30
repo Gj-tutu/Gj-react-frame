@@ -1,18 +1,17 @@
-import Env from './lib/Env'
-window.Env = new Env(window)
-window.Promise = require('promise')
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 import createStore from './store/createStore'
 import AppContainer from './containers/AppContainer'
 
-let injectTapEventPlugin = require('react-tap-event-plugin')
-injectTapEventPlugin({
-  shouldRejectClick: function (lastTouchEventTimestamp, clickEventTimestamp) {
-    return window.Env.isMobile
-  }
-})
+// let injectTapEventPlugin = require('react-tap-event-plugin')
+// injectTapEventPlugin({
+//   shouldRejectClick: function (lastTouchEventTimestamp, clickEventTimestamp) {
+//     return window.Env.isMobile
+//   }
+// })
+
+var attachFastClick = require('fastclick')
+attachFastClick.attach(document.body)
 
 // ========================================================
 // Store Instantiation
@@ -36,14 +35,11 @@ let render = () => {
 // ========================================================
 // Developer Tools Setup
 // ========================================================
-if (__DEV__) {
-  if (window.devToolsExtension) {
-    window.devToolsExtension.open()
-  }
-}
-
-// This code is excluded from production bundle
-if (__DEV__) {
+if (__DEV__ && !__APP__) {
+  // if (window.devToolsExtension) {
+  //   window.devToolsExtension.open()
+  // }
+  // This code is excluded from production bundle
   if (module.hot) {
     // Development render functions
     const renderApp = render
@@ -76,3 +72,4 @@ if (__DEV__) {
 // Go!
 // ========================================================
 render()
+

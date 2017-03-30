@@ -1,39 +1,51 @@
-import {linkTo, goBack} from '../../lib/tools'
+import { linkTo, goBack, replaceLink, scan as toolsScan } from '../../lib/tools'
+import { toast } from '../../lib/Events'
+import * as Url from 'url'
+import { KEY as userKey, userRole, authIdentityStore, authIdentityStaff, authIdentityAuth } from './user'
+import { storeServiceKeys } from './service'
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const key = 'base'
+export const KEY = 'base'
 
-const BASE_REGISTER_CALL_BACK = 'BASE_REGISTER_CALL_BACK'
-const BASE_CALL_BACK = 'BASE_CALL_BACK'
+const REGISTER_CALL_BACK = 'REGISTER_CALL_BACK'
+const CALL_BACK = 'CALL_BACK'
 // ------------------------------------
 // Actions
 // ------------------------------------
 
-export function registerCallBack (page, { init, callBack }) {
+export function registerCallBack (page, { init, callBack, needBack }, replace) {
   return (dispatch, getState) => {
     dispatch({
-      key,
-      type: BASE_REGISTER_CALL_BACK,
+      KEY,
+      type: REGISTER_CALL_BACK,
       payload: {
         init,
-        callBack
+        callBack,
+        needBack
       }
     })
-    linkTo(page)
+    if (replace) {
+      replaceLink(page)
+    } else {
+      linkTo(page)
+    }
   }
 }
 
 export function callBack (result) {
   return (dispatch, getState) => {
-    let callBack = getState().data.get(data).pageCallBack
-    if (callBack) {
-      dispatch(callBack(result))
-      dispatch({
-        key,
-        type: BASE_CALL_BACK
-      })
+    let pageCallBack = getState().data.get(KEY).pageCallBack
+    let needBack = getState().data.get(KEY).needBack
+    dispatch({
+      KEY,
+      type: CALL_BACK
+    })
+    if (needBack) {
       goBack()
+    }
+    if (pageCallBack) {
+      pageCallBack(result)
     }
   }
 }
@@ -43,15 +55,17 @@ export const action = {}
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [BASE_REGISTER_CALL_BACK]: (state, action) => {
+  [REGISTER_CALL_BACK]: (state, action) => {
     state.pageCallBack = action.payload.callBack
     state.pageInit = action.payload.init
-    return { ...state }
+    state.needBack = action.payload.needBack
+    return state
   },
-  [BASE_CALL_BACK]: (state, action) => {
+  [CALL_BACK]: (state, action) => {
     state.pageCallBack = null
     state.pageInit = null
-    return { ...state }
+    state.needBack = true
+    return state
   }
 }
 
@@ -60,7 +74,8 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 export const initState = {
   pageCallBack: null,
-  pageInit: null
+  pageInit: null,
+  needBack: true
 }
 export default function (state = initState, action) {
   const handler = ACTION_HANDLERS[action.type]

@@ -5,16 +5,25 @@ const webpackConfig = require('../build/webpack.config')
 const config = require('../config')
 const app = express()
 const paths = config.utils_paths
+const proxy = require('http-proxy-middleware')
 
-var proxyTable = config.proxyTable
-
-Object.keys(proxyTable).forEach(function (context) {
-  var options = proxyTable[context]
-  if (typeof options === 'string') {
-    options = { target: options }
+let apiContext = '/api'
+let apiOptions = { target: 'http://127.0.0.1:8080',
+  changeOrigin: true,
+  pathRewrite: {
+    '/api/': '/'
   }
-  app.use(require('http-proxy-middleware')(context, options))
-})
+}
+app.use(proxy(apiContext, apiOptions))
+let socketContext = '/socket.io'
+let socketOptions = { target: 'http://127.0.0.1:8080',
+  changeOrigin: true,
+  pathRewrite: {
+    '/socket.io/': '/socket.io/'
+  },
+  ws: true
+}
+app.use(proxy(socketContext, socketOptions))
 
 // This rewrites all routes requests to the root /index.html file
 // (ignoring file requests). If you want to implement universal

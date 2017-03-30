@@ -2,8 +2,7 @@ import Common from '../../lib/Common'
 
 export const config = {
   path: '/',
-  name: '首页',
-  needLogin: true
+  name: '首页'
 }
 
 export default (store) => ({

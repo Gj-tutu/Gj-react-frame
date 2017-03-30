@@ -15,7 +15,25 @@ const compile = () => {
         throw new Error('Config set to fail on warning, exiting with status code "1".')
       }
       debug('Copying static assets to dist folder.')
-      fs.copySync(paths.client('static'), paths.dist())
+      fs.copySync(paths.client('static'), paths.tmp())
+      fs.ensureDirSync(paths.dist())
+      fs.copySync(paths.dist(), `${paths.dist()}_back`)
+      fs.removeSync(paths.dist())
+      return new Promise((resolve, reject) => {
+        fs.move(paths.tmp(), paths.dist(), err => {
+          if (err) {
+            reject()
+          } else {
+            resolve()
+          }
+        })
+      }).then(() => {
+        fs.removeSync(`${paths.dist()}_back`)
+      }).catch(() => {
+        fs.removeSync(paths.dist())
+        fs.copySync(`${paths.dist()}_back`, paths.dist())
+        throw new Error('mv error')
+      })
     })
     .then(() => {
       debug('Compilation completed successfully.')

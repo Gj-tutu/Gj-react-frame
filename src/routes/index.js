@@ -3,10 +3,9 @@ import App from '../layouts/App'
 import Error404 from './404'
 import Home from './home'
 import templateRoute from './template'
-import userRoute from './user'
 import Redirect from './404/redirect'
 
-var routerList = [...userRoute]
+var routerList = []
 
 if (__DEBUG__) {
   routerList = [...routerList, ...templateRoute]

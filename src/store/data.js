@@ -1,12 +1,11 @@
-import * as user from './data/user'
+import { Map } from 'immutable'
 
 const DATA_INIT = 'DATA_INIT'
 
-var dataTable = {
-  user: user.default
-}
-var initState = {
-  user: user.initState
+// 对订单和用户数据进行初始化
+var dataTable = {}
+var initState = function () {
+  return Map()
 }
 var stateList = []
 var initNum = 0
@@ -15,9 +14,10 @@ export function registerData (store, reducers) {
   let init = false
   for (let i = 0; i < reducers.length; i++) {
     let reducer = reducers[i]
-    if (dataTable[reducer.key]) continue
-    dataTable[reducer.key] = reducer.default
-    stateList.push({ key: reducer.key, initState: reducer.initState })
+    if (dataTable[reducer.KEY]) continue
+    dataTable[reducer.KEY] = reducer.default
+    if (!reducer.initState) continue
+    stateList.push({ KEY: reducer.KEY, initState: reducer.initState })
     init = true
   }
   if (init) {
@@ -27,23 +27,23 @@ export function registerData (store, reducers) {
   }
 }
 
-export default function (state = initState, action) {
+export default function (state = initState(), action) {
   if (action.type === DATA_INIT) {
     let num = 0
     for (let k = stateList.length - 1; k >= initNum; k--) {
       let reducer = stateList[k]
-      if (state[reducer.key]) {
+      if (state.get(reducer.KEY)) {
       } else {
-        state[reducer.key] = reducer.initState
-        num ++
+        state = state.set(reducer.KEY, reducer.initState)
+        num += 1
       }
     }
     initNum = initNum + num
+  } else {
+    let KEY = action.KEY
+    if (KEY) {
+      state = state.set(KEY, dataTable[KEY](state.get(KEY), action))
+    }
   }
-
-  let key = action.key
-  if (key) {
-    state[key] = dataTable[key](state[key], action)
-  }
-  return { ...state }
+  return state
 }

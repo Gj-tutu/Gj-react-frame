@@ -14,19 +14,13 @@ debug('Creating default configuration.')
 
 let env_config = {
   'development': {
-    server_host: local.host || '',
-    server_port: process.env.PORT || 3000,
-    proxyTable: {}
+    url: `http://${local.host}:${3000}`
   },
   'test': {
-    server_host: "",
-    server_port: "",
-    proxyTable: {}
+    url: ``
   },
   'production': {
-    server_host: "",
-    server_port: "",
-    proxyTable: {}
+    url: ``
   }
 }
 
@@ -39,12 +33,16 @@ const config = Object.assign(env_config[NODE_ENV], {
   // Project Structure
   // ----------------------------------
   env: NODE_ENV,
+  server_host: local.host,
+  server_port: 3000,
+  app: !!process.env.npm_config_app,
   path_base  : path.resolve(__dirname, '..'),
   dir_client : 'src',
   dir_dist   : 'dist',
+  dir_tmp    : 'tmp',
   dir_server : 'server',
   dir_test   : 'tests',
-  api_path   : '',
+  api_path   : `/api`,
 
   // ----------------------------------
   // Server Configuration
@@ -55,8 +53,10 @@ const config = Object.assign(env_config[NODE_ENV], {
   // ----------------------------------
   compiler_babel : {
     cacheDirectory : true,
-    plugins        : ['transform-runtime'],
-    presets        : ['es2015', 'react', 'stage-0']
+    plugins        : [
+      ['transform-runtime', { 'polyfill': false, 'regenerator': true }]
+    ],
+    presets         : ['es2015', 'react', 'stage-0']
   },
   compiler_devtool         : 'source-map',
   compiler_hash_type       : 'hash',
@@ -85,13 +85,13 @@ const config = Object.assign(env_config[NODE_ENV], {
 })
 
 /************************************************
--------------------------------------------------
+ -------------------------------------------------
 
-All Internal Configuration Below
-Edit at Your Own Risk
+ All Internal Configuration Below
+ Edit at Your Own Risk
 
--------------------------------------------------
-************************************************/
+ -------------------------------------------------
+ ************************************************/
 
 // ------------------------------------
 // Environment
@@ -107,8 +107,10 @@ config.globals = {
   '__TEST__'     : config.env === 'test',
   '__COVERAGE__' : !argv.watch && config.env === 'test',
   '__BASENAME__' : JSON.stringify(process.env.BASENAME || ''),
-  'DEBUG'        : config.env === 'development' || config.env === 'test',
-  '__API_PATH__' : "\'/api/\'"
+  '__DEBUG__'    : config.env === 'development' || config.env === 'test',
+  '__API_PATH__' : config.app ? `\'${config.url}${config.api_path}\'` : `\'${config.api_path}\'`,
+  '__PATH__'     : config.app ? `\'${config.url}\'` : `\'/\'`,
+  '__APP__'      : config.app
 }
 // ------------------------------------
 // Validate Vendor Dependencies
@@ -120,7 +122,7 @@ config.compiler_vendors = config.compiler_vendors
     if (pkg.dependencies[dep]) return true
 
     debug(
-      `Package "${dep}" was not found as an npm dependency in package.json; ` +
+      `Package '${dep}' was not found as an npm dependency in package.json; ` +
       `it won't be included in the webpack vendor bundle.
        Consider removing it from compiler_vendors in ~/config/index.js`
     )
@@ -137,13 +139,14 @@ function base () {
 config.utils_paths = {
   base    : base,
   client  : base.bind(null, config.dir_client),
-  dist    : base.bind(null, config.dir_dist)
+  dist    : base.bind(null, config.dir_dist),
+  tmp     : base.bind(null, config.dir_tmp)
 }
 
 // ========================================================
 // Environment Configuration
 // ========================================================
-debug(`Looking for environment overrides for NODE_ENV "${config.env}".`)
+debug(`Looking for environment overrides for NODE_ENV '${config.env}'.`)
 const environments = require('./environments')
 const overrides = environments[config.env]
 if (overrides) {

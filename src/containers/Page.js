@@ -1,6 +1,6 @@
-import React from 'react'
-import { Component } from 'react'
-import Common from '../lib/Common'
+import React, { Component } from 'react'
+import Common, { app } from '../lib/Common'
+import { goBack } from '../lib/tools'
 
 class Page extends Component {
   init = false
@@ -12,19 +12,35 @@ class Page extends Component {
     this.config = config
   }
 
-  componentWillMount () {
-    Common.pageInit()
-    this.initData()
-    this.init = true
+  restart () {
+    this.init = false
   }
 
-  componentDidUpdate () {
+  componentWillMount () {
+    if (Common.allowInit(this.config)) {
+      Common.pageInit()
+      if (!this.isCallBack()) this.initData()
+      this.init = true
+    }
+    Common.pageChangeEnd()
+    this.inPage()
+  }
+
+  componentWillUpdate () {
     if (this.init) {
       this.updateData()
     } else {
-      this.initData()
-      this.init = true
+      if (Common.allowInit(this.config)) {
+        Common.pageInit()
+        if (!this.isCallBack()) this.initData()
+        this.init = true
+      }
+      Common.pageChangeEnd()
     }
+  }
+
+  componentWillUnmount () {
+    this.outPage()
   }
 
   initData () {
@@ -35,16 +51,44 @@ class Page extends Component {
 
   }
 
-  renderEmptyView () {
-    return (<div></div>)
+  inPage () {
+
+  }
+
+  outPage () {
+
+  }
+
+  getPageHeight () {
+    return window.document.documentElement.clientHeight
+  }
+
+  getPageWidth () {
+    return window.document.documentElement.clientWidth
+  }
+
+  isCallBack () {
+    return Common.isCallBack
   }
 
   render () {
-    return this.renderView()
+    if (Common.allowInit(this.config)) {
+      return (
+        <div className='page'>
+          {this.renderView()}
+        </div>
+      )
+    } else {
+      return this.renderEmptyView()
+    }
   }
 
   renderView () {
-    return (<div></div>)
+    return <div />
+  }
+
+  renderEmptyView () {
+    return <div />
   }
 }
 

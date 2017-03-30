@@ -1,7 +1,6 @@
-import React, { Component, PropTypes } from 'react'
-import { browserHistory, Router } from 'react-router'
+import React, { Component } from 'react'
+import { hashHistory, Router } from 'react-router'
 import { Provider } from 'react-redux'
-import Toast from './Toast'
 
 class AppContainer extends Component {
   constructor (props) {
@@ -10,12 +9,10 @@ class AppContainer extends Component {
 
   render () {
     const { routes, store } = this.props
-
     return (
       <Provider store={store}>
-        <div style={{ height:'100%' }}>
-          <Toast />
-          <Router history={browserHistory} children={routes} />
+        <div>
+          <Router history={hashHistory} children={routes} />
         </div>
       </Provider>
     )
