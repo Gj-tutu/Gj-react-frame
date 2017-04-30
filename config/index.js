@@ -11,35 +11,52 @@ try {
 
 debug('Creating default configuration.')
 
+
+let env_config = {
+  'development': {
+    url: `http://${local.host}:${3000}`
+  },
+  'test': {
+    url: ``
+  },
+  'production': {
+    url: ``
+  }
+}
+
+const NODE_ENV = process.env.NODE_ENV || 'development'
 // ========================================================
 // Default Configuration
 // ========================================================
-const config = {
-  env : process.env.NODE_ENV || 'development',
-
+const config = Object.assign(env_config[NODE_ENV], {
   // ----------------------------------
   // Project Structure
   // ----------------------------------
+  env: NODE_ENV,
+  server_host: local.host,
+  server_port: 3000,
+  app: !!process.env.npm_config_app,
   path_base  : path.resolve(__dirname, '..'),
   dir_client : 'src',
   dir_dist   : 'dist',
+  dir_tmp    : 'tmp',
   dir_server : 'server',
   dir_test   : 'tests',
-  api_path   : '',
+  api_path   : `/api`,
 
   // ----------------------------------
   // Server Configuration
   // ----------------------------------
-  server_host : local.host || '', // use string 'localhost' to prevent exposure on local network
-  server_port : process.env.PORT || 3000,
 
   // ----------------------------------
   // Compiler Configuration
   // ----------------------------------
   compiler_babel : {
     cacheDirectory : true,
-    plugins        : ['transform-runtime'],
-    presets        : ['es2015', 'react', 'stage-0']
+    plugins        : [
+      ['transform-runtime', { 'polyfill': false, 'regenerator': true }]
+    ],
+    presets         : ['es2015', 'react', 'stage-0']
   },
   compiler_devtool         : 'source-map',
   compiler_hash_type       : 'hash',
@@ -65,28 +82,16 @@ const config = {
     { type : 'text-summary' },
     { type : 'lcov', dir : 'coverage' }
   ]
-}
+})
 
 /************************************************
--------------------------------------------------
+ -------------------------------------------------
 
-All Internal Configuration Below
-Edit at Your Own Risk
+ All Internal Configuration Below
+ Edit at Your Own Risk
 
--------------------------------------------------
-************************************************/
-
-let env_config = {
-  'development': {
-    host: `'http://${config.server_host}:${config.server_port}'`
-  },
-  'test': {
-    host: ""
-  },
-  'production': {
-    host: ""
-  }
-}
+ -------------------------------------------------
+ ************************************************/
 
 // ------------------------------------
 // Environment
@@ -94,7 +99,7 @@ let env_config = {
 // N.B.: globals added here must _also_ be added to .eslintrc
 config.globals = {
   'process.env'  : {
-    'NODE_ENV' : JSON.stringify(config.env)
+    'NODE_ENV'   : JSON.stringify(config.env)
   },
   'NODE_ENV'     : config.env,
   '__DEV__'      : config.env === 'development',
@@ -102,8 +107,10 @@ config.globals = {
   '__TEST__'     : config.env === 'test',
   '__COVERAGE__' : !argv.watch && config.env === 'test',
   '__BASENAME__' : JSON.stringify(process.env.BASENAME || ''),
-  'DEBUG'        : config.env === 'development' || config.env === 'test',
-  '__API_PATH__' : "\'/api/\'"
+  '__DEBUG__'    : config.env === 'development' || config.env === 'test',
+  '__API_PATH__' : config.app ? `\'${config.url}${config.api_path}\'` : `\'${config.api_path}\'`,
+  '__PATH__'     : config.app ? `\'${config.url}\'` : `\'/\'`,
+  '__APP__'      : config.app
 }
 // ------------------------------------
 // Validate Vendor Dependencies
@@ -115,7 +122,7 @@ config.compiler_vendors = config.compiler_vendors
     if (pkg.dependencies[dep]) return true
 
     debug(
-      `Package "${dep}" was not found as an npm dependency in package.json; ` +
+      `Package '${dep}' was not found as an npm dependency in package.json; ` +
       `it won't be included in the webpack vendor bundle.
        Consider removing it from compiler_vendors in ~/config/index.js`
     )
@@ -132,13 +139,14 @@ function base () {
 config.utils_paths = {
   base    : base,
   client  : base.bind(null, config.dir_client),
-  dist    : base.bind(null, config.dir_dist)
+  dist    : base.bind(null, config.dir_dist),
+  tmp     : base.bind(null, config.dir_tmp)
 }
 
 // ========================================================
 // Environment Configuration
 // ========================================================
-debug(`Looking for environment overrides for NODE_ENV "${config.env}".`)
+debug(`Looking for environment overrides for NODE_ENV '${config.env}'.`)
 const environments = require('./environments')
 const overrides = environments[config.env]
 if (overrides) {

@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
-import './App.scss'
+import './index.less'
 
 const App = ({ children, location }) => (
   <ReactCSSTransitionGroup id="app-animation"
@@ -14,10 +14,5 @@ const App = ({ children, location }) => (
     })}
   </ReactCSSTransitionGroup>
 )
-
-App.propTypes = {
-  children: React.PropTypes.object.isRequired,
-  location: React.PropTypes.object.isRequired
-}
 
 export default App

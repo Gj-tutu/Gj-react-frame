@@ -13,23 +13,16 @@ export default (initialState = {}) => {
   // ======================================================
   // Store Enhancers
   // ======================================================
-  const enhancers = []
-  if (DEBUG) {
-    const devToolsExtension = window.devToolsExtension
-    if (typeof devToolsExtension === 'function') {
-      enhancers.push(devToolsExtension())
-    }
-  }
 
   // ======================================================
   // Store Instantiation and HMR Setup
   // ======================================================
+  const composeEnhancers = __DEBUG__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : false || compose;
   const store = createStore(
     makeRootReducer(),
     initialState,
-    compose(
-      applyMiddleware(...middleware),
-      ...enhancers
+    composeEnhancers(
+      applyMiddleware(...middleware)
     )
   )
   store.asyncReducers = {}

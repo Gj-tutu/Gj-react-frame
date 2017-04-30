@@ -1,8 +1,8 @@
-import Common from '../../../lib/Common'
+import Common from '../../lib/Common'
 
 export const config = {
-  path: 'template/test',
-  name: '模板'
+  path: '404',
+  name: '该页面不存在'
 }
 
 export default (store) => ({
@@ -15,10 +15,8 @@ export default (store) => ({
   },
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
-      const base = require('../../../store/data/base')
       const page = require('./page').default
-      const option = require('./option')
-      Common.pageView(store, cb, page, option, [base])
+      Common.pageView(store, cb, page)
     })
   }
 })

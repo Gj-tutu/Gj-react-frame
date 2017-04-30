@@ -1,29 +1,15 @@
-import 'whatwg-fetch'
 import { ApiPath } from './ApiSetting'
-import { load, loaded } from './Events'
+import { load, loaded, fail, offline, toast } from './Events'
+const Request = require('superagent')
 
 class Api {
 
-  token = ''
-  static api = null
-
-  constructor () {
-  }
-
-  static single () {
-    if (!Api.api) {
-      Api.api = new Api()
-    }
-    return Api.api
-  }
-
-  request (api, data, showLoad = true, showLoaded = true) {
+  static request (api, data, showLoad = true, showLoaded = true, showFail = true) {
     let option = { method: api.method, data: data }
-    return this.handle(api.url, option, showLoad, showLoaded)
+    return Api.handle(api.url, option, showLoad, showLoaded, showFail)
   }
 
   static send (url, option) {
-    let request = {}
     let paramList = url.match(/\{.*?\}/g)
     if (paramList && paramList.length > 0) {
       for (let k in paramList) {
@@ -34,52 +20,53 @@ class Api {
         option.data[key] = null
       }
     }
-    request.method = option.method
-    request.headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+    let data = {}
+    for (let i in option.data) {
+      if (option.data[i] || option.data[i] === 0) data[i] = option.data[i]
     }
-    if (!window.Env.isAndroid) {
-      request.headers['Cookie'] = window.document.cookie
-    }
-    if (option.method === 'post') {
-      request.body = JSON.stringify(option.data)
-    }
-    request.credentials = 'include'
-    if (option.method === 'get') {
-      let data = `?`
-      for (let i in option.data) {
-        if (!option.data[i]) continue
-        data = `${data}${i}=${option.data[i]}&`
+    return new Promise((resolve, reject) => {
+      let request = Request(option.method, `${ApiPath}${url}`)
+        .type('application/json')
+        .accept('application/json')
+      if (option.method === 'post') {
+        request = request.send(data)
+      } else {
+        request = request.query(data)
       }
-      data = data.substring(0, data.length - 1)
-      url = `${url}${encodeURI(data)}`
-    }
-    return fetch(`${ApiPath}${url}`, request)
+      request.send(data).end((error, response) => {
+        if (error) {
+          if (__DEBUG__) console.log(error)
+          reject(new Error('网络链接错误,服务暂时不可用'))
+        } else {
+          resolve(response)
+        }
+      })
+    })
   }
 
-  handle (url, option, showLoad = true, showLoaded = true) {
+  static handle (url, option, showLoad = true, showLoaded = true, showFail = true) {
     if (showLoad) load()
     return Api.send(url, option).then((response) => {
       if (response.ok) {
-        return response.json()
+        return response.body
       } else {
-        if (showLoad) loaded(false)
         throw new Error('网络链接错误,服务暂时不可用')
       }
-    }).then((result) => {
-      if (result.code === 200) {
+    }).then((data) => {
+      if (data.status === 200) {
         if (showLoad) loaded(showLoaded)
-        return result.data
+        return data.result
       } else {
-        if (result.code !== 500) {
-          throw new Error(result.error.errorMsg)
+        if (data.status !== 500) {
+          throw new Error(data.message)
         } else {
-          throw new Error(result.message)
+          throw new Error(data.message)
         }
       }
     }).catch((error) => {
       if (showLoad) loaded(false)
+      if (showFail) fail(error.message)
+      if (__DEBUG__) console.log(error)
       throw error
     })
   }

@@ -3,44 +3,27 @@ const debug = require('debug')('app:server')
 const webpack = require('webpack')
 const webpackConfig = require('../build/webpack.config')
 const config = require('../config')
-const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
-const request = require('request')
 const app = express()
 const paths = config.utils_paths
+const proxy = require('http-proxy-middleware')
 
-app.use(bodyParser.urlencoded({ extended: false }))
-
-app.use(bodyParser.json())
-
-app.all('/api/*', (req, res) => {
-  let option = {}
-  option.method = req.method
-  if (req.method === 'POST') {
-    option.body = JSON.stringify(req.body)
+let apiContext = '/api'
+let apiOptions = { target: 'http://127.0.0.1:8080',
+  changeOrigin: true,
+  pathRewrite: {
+    '/api/': '/'
   }
-  option.headers = req.headers
-
-  let url = req.url
-  url = url.substr(5, url.length - 5)
-  url = `${config.api_path}${url}`
-  option.url = url
-  request(option, function (error, response, body) {
-    if (!error) {
-      console.log(response.body)
-    } else {
-      console.log(error)
-    }
-    if (!error && response.statusCode === 200) {
-      if(response.headers['set-cookie']) {
-        res.setHeader('set-cookies', response.headers['set-cookie'])
-      }
-      res.send(response.body)
-    } else {
-      res.send(JSON.stringify({ status_code: 500, message: '接口请求错误', data: {} }))
-    }
-  })
-})
+}
+app.use(proxy(apiContext, apiOptions))
+let socketContext = '/socket.io'
+let socketOptions = { target: 'http://127.0.0.1:8080',
+  changeOrigin: true,
+  pathRewrite: {
+    '/socket.io/': '/socket.io/'
+  },
+  ws: true
+}
+app.use(proxy(socketContext, socketOptions))
 
 // This rewrites all routes requests to the root /index.html file
 // (ignoring file requests). If you want to implement universal

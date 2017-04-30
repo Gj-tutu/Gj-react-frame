@@ -1,14 +1,11 @@
 import Common from '../../lib/Common'
 
 export const config = {
-  path: '404',
-  name: '该页面不存在',
-  needLogin: false,
-  anyOne: true
+  path: '/',
+  name: '首页'
 }
 
 export default (store) => ({
-  path: config.path,
   onEnter: (props, replace) => {
     Common.pageEnter(config, store, props, replace)
   },
@@ -17,8 +14,10 @@ export default (store) => ({
   },
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
-      const pageView = require('./components').default
-      cb(null, pageView)
+      const base = require('../../store/data/base')
+      const page = require('./page').default
+      const option = require('./option')
+      Common.pageView(store, cb, page, option, [base])
     })
   }
 })

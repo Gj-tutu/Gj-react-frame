@@ -1,13 +1,14 @@
 // We only need to import the modules necessary for initial render
-import App from '../layouts/App/App'
-import PageNotFound from './PageNotFound'
+import App from '../layouts/App'
+import Error404 from './404'
+import Home from './home'
 import templateRoute from './template'
-import Redirect from './PageNotFound/redirect'
+import Redirect from './404/redirect'
 
 var routerList = []
 
-if (DEBUG) {
-  routerList = [...templateRoute]
+if (__DEBUG__) {
+  routerList = [...routerList, ...templateRoute]
 }
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -17,13 +18,14 @@ export const createRoutes = (store) => {
   for (let i in routerList) {
     routerList[i] = routerList[i](store)
   }
+
   return {
     path: '/',
     component: App,
-    indexRoute: Home,
+    indexRoute: Home(store),
     childRoutes: [
       ...routerList,
-      PageNotFound(),
+      Error404(store),
       Redirect
     ]
   }

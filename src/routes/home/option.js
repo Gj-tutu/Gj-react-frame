@@ -1,28 +1,25 @@
-import { toast } from '../../../../lib/Events'
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const page = 'template-test'
+export const key = 'home-option'
+export const option = true
 // ------------------------------------
 // Actions
 // ------------------------------------
 
-export const actions = {
-}
+export const action = {}
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
+
 }
 
 // ------------------------------------
 // Reducer
 // ------------------------------------
-export const initialState = {
-}
-
-export default function (state = initialState, action) {
+export const initState = null
+export default function (state = initState, action) {
   const handler = ACTION_HANDLERS[action.type]
-
   return handler ? handler(state, action) : state
 }

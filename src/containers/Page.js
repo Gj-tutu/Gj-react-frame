@@ -1,43 +1,46 @@
-import React from 'react'
-import { Component } from 'react'
-import Common from '../lib/Common'
+import React, { Component } from 'react'
+import Common, { app } from '../lib/Common'
+import { goBack } from '../lib/tools'
 
 class Page extends Component {
   init = false
-  config = {
-    needLogin: false,
-    anyOne: false
-  }
+  config = {}
 
   constructor (props, config) {
     super(props)
     this.init = false
-    this.replace = false
     this.config = config
   }
 
-  componentWillMount () {
-    Common.pageInit()
-    if (this.config.needLogin && !this.props.user.isLogin) return
-    if (this.config.needLogin) {
-      Common.pageReplace(this.config, this.props.location, this.props.user.info)
-      this.replace = true
-    }
-    if (!this.config.anyOne && !this.props.user.info.clinicTrue) return
-    this.initData()
-    this.init = true
+  restart () {
+    this.init = false
   }
 
-  componentDidUpdate () {
-    if (this.config.needLogin && !this.props.user.isLogin) return
-    if (this.config.needLogin && !this.replace) Common.pageReplace(this.config, this.props.location, this.props.user.info)
-    if (!this.config.anyOne && !this.props.user.info.clinicTrue) return
+  componentWillMount () {
+    if (Common.allowInit(this.config)) {
+      Common.pageInit()
+      if (!this.isCallBack()) this.initData()
+      this.init = true
+    }
+    Common.pageChangeEnd()
+    this.inPage()
+  }
+
+  componentWillUpdate () {
     if (this.init) {
       this.updateData()
     } else {
-      this.initData()
-      this.init = true
+      if (Common.allowInit(this.config)) {
+        Common.pageInit()
+        if (!this.isCallBack()) this.initData()
+        this.init = true
+      }
+      Common.pageChangeEnd()
     }
+  }
+
+  componentWillUnmount () {
+    this.outPage()
   }
 
   initData () {
@@ -48,18 +51,44 @@ class Page extends Component {
 
   }
 
-  renderEmptyView () {
-    return (<div></div>)
+  inPage () {
+
+  }
+
+  outPage () {
+
+  }
+
+  getPageHeight () {
+    return window.document.documentElement.clientHeight
+  }
+
+  getPageWidth () {
+    return window.document.documentElement.clientWidth
+  }
+
+  isCallBack () {
+    return Common.isCallBack
   }
 
   render () {
-    if (this.config.needLogin && !this.props.user.isLogin) return this.renderEmptyView()
-    if (!this.config.anyOne && !this.props.user.info.doctorTrue) return this.renderEmptyView()
-    return this.renderView()
+    if (Common.allowInit(this.config)) {
+      return (
+        <div className='page'>
+          {this.renderView()}
+        </div>
+      )
+    } else {
+      return this.renderEmptyView()
+    }
   }
 
   renderView () {
-    return (<div></div>)
+    return <div />
+  }
+
+  renderEmptyView () {
+    return <div />
   }
 }
 
