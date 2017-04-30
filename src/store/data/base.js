@@ -1,8 +1,4 @@
-import { linkTo, goBack, replaceLink, scan as toolsScan } from '../../lib/tools'
-import { toast } from '../../lib/Events'
-import * as Url from 'url'
-import { KEY as userKey, userRole, authIdentityStore, authIdentityStaff, authIdentityAuth } from './user'
-import { storeServiceKeys } from './service'
+import { linkTo, goBack, replaceLink } from '../../lib/tools'
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -10,11 +6,11 @@ export const KEY = 'base'
 
 const REGISTER_CALL_BACK = 'REGISTER_CALL_BACK'
 const CALL_BACK = 'CALL_BACK'
-// ------------------------------------
-// Actions
-// ------------------------------------
+  // ------------------------------------
+  // Actions
+  // ------------------------------------
 
-export function registerCallBack (page, { init, callBack, needBack }, replace) {
+export function registerCallBack(page, { init, callBack, needBack }, replace) {
   return (dispatch, getState) => {
     dispatch({
       KEY,
@@ -33,7 +29,7 @@ export function registerCallBack (page, { init, callBack, needBack }, replace) {
   }
 }
 
-export function callBack (result) {
+export function callBack(result) {
   return (dispatch, getState) => {
     let pageCallBack = getState().data.get(KEY).pageCallBack
     let needBack = getState().data.get(KEY).needBack
@@ -51,9 +47,9 @@ export function callBack (result) {
 }
 
 export const action = {}
-// ------------------------------------
-// Action Handlers
-// ------------------------------------
+  // ------------------------------------
+  // Action Handlers
+  // ------------------------------------
 const ACTION_HANDLERS = {
   [REGISTER_CALL_BACK]: (state, action) => {
     state.pageCallBack = action.payload.callBack
@@ -77,7 +73,7 @@ export const initState = {
   pageInit: null,
   needBack: true
 }
-export default function (state = initState, action) {
+export default function(state = initState, action) {
   const handler = ACTION_HANDLERS[action.type]
   return handler ? handler(state, action) : state
 }

@@ -1,6 +1,4 @@
 import { hashHistory } from 'react-router'
-import { ListView } from 'antd-mobile'
-import { scan as appScan } from './cordovaPlugin'
 // export const setDocumentTitle = (title) => {
 //   document.title = title
 //   if (window.Env.isIos) {

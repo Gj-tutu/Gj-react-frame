@@ -1,30 +1,31 @@
 import Env from './Env'
 window.Env = Env
-// 事件列表
-export function load () {
+  // 事件列表
+export function load() {
   eventEmit('load')
 }
-export function loaded (show, text, time) {
+export function loaded(show, text, time) {
   eventEmit('loaded', show, text, time)
 }
-export function toast (text, time) {
+export function toast(text, time) {
   eventEmit('toast', text, time)
 }
-export function fail (text, time) {
+export function fail(text, time) {
   eventEmit('fail', text, time)
 }
-export function offline () {
+export function offline() {
   eventEmit('offline')
 }
-export function todayUpdate (store_id) {
+export function todayUpdate(store_id) {
   eventEmit('todayUpdate', store_id)
 }
-function changeDate () {
+
+function changeDate() {
   eventEmit('changeDate')
 }
 
 let date = new Date().format()
-// 10分钟查询一次日期是否有变更
+  // 10分钟查询一次日期是否有变更
 setInterval(() => {
   let newDate = new Date().format()
   if (newDate !== date) {
@@ -33,24 +34,7 @@ setInterval(() => {
   }
 }, 10 * 60 * 60 * 1000)
 
-function eventEmit (...values) {
+function eventEmit(...values) {
   if (__DEBUG__) console.log(...values)
   window.appEvent.emit(...values)
-}
-
-let socketEmitList = []
-// socket连接时，对事件列表进行重新发送
-window.appSocket.on('connect', () => {
-  if (__DEBUG__) console.log('socket connect')
-  for (let i in socketEmitList) {
-    socketEmit(...socketEmitList[i])
-  }
-})
-window.appSocket.on('disconnect', () => {
-  if (__DEBUG__) console.log('socket disconnect')
-})
-
-function socketEmit (...values) {
-  if (__DEBUG__) console.log(...values)
-  window.appSocket.emit(...values)
 }

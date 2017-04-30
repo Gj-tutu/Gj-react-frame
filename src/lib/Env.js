@@ -20,12 +20,12 @@ class Env {
   width = 0
   height = 0
 
-  constructor (window) {
+  constructor(window) {
     this.initPlant(window)
     this.initFunc(window)
   }
 
-  initPlant () {
+  initPlant() {
     var agent = window.navigator.userAgent.toLowerCase()
     this.isIpad = agent.match(/ipad/i) == 'ipad'
     this.isIpod = agent.match(/ipod/i) == 'ipod'
@@ -49,10 +49,10 @@ class Env {
     }
   }
 
-  initFunc (window) {
+  initFunc(window) {
     window.appEvent = new events.EventEmitter()
     window.appCache = new CacheManage()
-    window.appSocket = require('socket.io-client')(__PATH__)
+      // window.appSocket = require('socket.io-client')(__PATH__)
   }
 }
 export default new Env(window)
