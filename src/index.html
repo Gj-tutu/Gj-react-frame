@@ -2,16 +2,67 @@
 <html lang="zh">
 
 <head>
-  <title></title>
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+  <meta name="description" content="<%= htmlWebpackPlugin.options.globals.description %>">
+  <meta name="keyword" content="<%= htmlWebpackPlugin.options.globals.keyword %>">
+
+  <link rel="shortcut icon" href="/favicon.ico">
   <meta charset="utf-8">
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-  <meta name="format-detection" content="telephone=no" />
-  <meta name="format-detection" content="email=no" />
+  <script>
+    ! function(e) {
+      function t(a) {
+        if (i[a]) return i[a].exports;
+        var n = i[a] = {
+          exports: {},
+          id: a,
+          loaded: !1
+        };
+        return e[a].call(n.exports, n, n.exports, t), n.loaded = !0, n.exports
+      }
+      var i = {};
+      return t.m = e, t.c = i, t.p = "", t(0)
+    }([function(e, t) {
+      "use strict";
+      Object.defineProperty(t, "__esModule", {
+        value: !0
+      });
+      var i = window;
+      t["default"] = i.flex = function(e, t) {
+        var a = e || 100,
+          n = t || 1,
+          r = i.document,
+          o = navigator.userAgent,
+          d = o.match(/Android[\S\s]+AppleWebkit\/(\d{3})/i),
+          l = o.match(/U3\/((\d+|\.){5,})/i),
+          c = l && parseInt(l[1].split(".").join(""), 10) >= 80,
+          p = navigator.appVersion.match(/(iphone|ipad|ipod)/gi),
+          s = 1; //i.devicePixelRatio || 1;
+        p || d && d[1] > 534 || c || (s = 1);
+        var u = 1 / s,
+          m = r.querySelector('meta[name="viewport"]');
+        m || (m = r.createElement("meta"), m.setAttribute("name", "viewport"), r.head.appendChild(m)), m.setAttribute("content", "width=device-width,user-scalable=no,initial-scale=1,maximum-scale=" + u + ",minimum-scale=" + u), r.documentElement.style.fontSize = a / 2 * s * n + "px"
+      }, e.exports = t["default"]
+    }]);
+    flex(100, 1);
+    window.onresize = function() {
+      flex(100, 1);
+    }
+  </script>
+
+  <script src="/pace.min.js"></script>
+  <link href="/pace-theme-minimal.css" rel="stylesheet" />
+
+  <% for (var i = 0; i < htmlWebpackPlugin.options.globals.scripts.length; i++) { %>
+    <script type="text/javascript" src="<%= htmlWebpackPlugin.options.globals.scripts[i] %>"></script>
+    <% } %>
 </head>
 
 <body>
-  <div id="root"></div>
+  <div id="root" class="root"></div>
   <script>
+    /*fix android bug*/
     if (!Array.prototype.findIndex) {
       Object.defineProperty(Array.prototype, "findIndex", {
         value: function(predicate) {
@@ -65,35 +116,14 @@
     }
     Object.defineProperty(Array.prototype, 'has', {
       value: function(value) {
-        var _list = Object(this);
-        var _length = _list.length >>> 0;
+        var _list = Object(this)
+        var _length = _list.length >>> 0
         for (var i = 0; i < _length; i++) {
-          if (_list[i] == value) return i
+          if (_list[i] === value) return i
         }
         return -1
       }
-    });
-    window.setCookie = function(name, value, time) {
-      var exp = new Date();
-      exp.setTime(exp.getTime() + time * 1000);
-      document.cookie = name + '=' + escape(value) + ';expires=' + exp.toGMTString() + ';path=/'
-    };
-    window.getCookie = function(name) {
-      var arr, reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
-      if (arr = document.cookie.match(reg)) {
-        return unescape(arr[2])
-      } else {
-        return null
-      }
-    };
-    window.delCookie = function(name) {
-      var exp = new Date();
-      exp.setTime(exp.getTime() - 1);
-      var cval = window.getCookie(name);
-      if (cval != null) {
-        document.cookie = name + '=' + cval + ';expires=' + exp.toGMTString() + ';path=/'
-      }
-    };
+    })
     Date.prototype.format = function(format) {
       if (!format) format = 'yyyy-MM-dd';
       var o = {
@@ -111,19 +141,8 @@
       }
       return format
     };
-    Date.prototype.getRoughTime = function() {
-      return Math.ceil(this.getTime() / 1000)
-    };
-    Date.prototype.getDayTime = function() {
-      return Math.ceil(new Date(this.format()).getTime() / 1000)
-    };
-    Date.nowTime = function() {
-      return Math.ceil(Date.now() / 1000)
-    };
-    Date.todayTime = function() {
-      return Math.ceil(new Date(new Date().format()).getTime() / 1000)
-    }
   </script>
+
 </body>
 
 </html>

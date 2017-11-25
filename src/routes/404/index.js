@@ -1,10 +1,8 @@
 import Common from '../../lib/Common'
-
 export const config = {
   path: '404',
-  name: '该页面不存在'
+  title: 'Page Not Found'
 }
-
 export default (store) => ({
   path: config.path,
   onEnter: (props, replace) => {
@@ -13,7 +11,7 @@ export default (store) => ({
   onLeave: (props, replace) => {
     Common.pageLeave(config, store, props, replace)
   },
-  getComponent (nextState, cb) {
+  getComponent(nextState, cb) {
     require.ensure([], (require) => {
       const page = require('./page').default
       Common.pageView(store, cb, page)

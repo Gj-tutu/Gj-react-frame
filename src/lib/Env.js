@@ -1,6 +1,8 @@
+/**
+ * 运行环境处理
+ */
 import * as events from 'events'
 import CacheManage from './Cache'
-
 class Env {
   isWeiXin = false
   isWeiXinDev = false
@@ -16,16 +18,16 @@ class Env {
   isWindowPhone = false
   isMobile = false
   isIos = false
-  isPc = false
   width = 0
   height = 0
-
   constructor(window) {
     this.initPlant(window)
     this.initFunc(window)
   }
-
   initPlant() {
+    /**
+     * 当前访问场景初始化
+     */
     var agent = window.navigator.userAgent.toLowerCase()
     this.isIpad = agent.match(/ipad/i) == 'ipad'
     this.isIpod = agent.match(/ipod/i) == 'ipod'
@@ -39,20 +41,20 @@ class Env {
     this.isChrome = agent.match(/chrome/i) == 'chrome'
     this.isSafari = agent.match(/safari/i) == 'safari'
     this.isOpera = agent.match(/opera/i) == 'opera'
-    this.isWeiXinDev = agent.match(/wechatdevtools/i) == 'wechatdevtools'
     if (this.isIpad || this.isIpod || this.isIphone) this.isIos = true
-    if (this.isIpad || this.isIpod || this.isIphone ||
-      this.isAndroid || this.isWindowPhone || this.isSymbian) {
+    if (this.isIpad || this.isIpod || this.isIphone || this.isAndroid || this.isWindowPhone || this.isSymbian) {
       this.isMobile = true
     } else {
       this.isPc = true
     }
   }
-
   initFunc(window) {
+    /**
+     * 当前环境基本接口初始化
+     */
     window.appEvent = new events.EventEmitter()
     window.appCache = new CacheManage()
-      // window.appSocket = require('socket.io-client')(__PATH__)
+    window.Promise = require('promise')
   }
 }
 export default new Env(window)

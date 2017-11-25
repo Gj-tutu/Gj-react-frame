@@ -1,0 +1,5 @@
+const config = require('../config')
+const server = require('../server/staticServer')
+const debug = require('debug')('app:bin:server')
+server.listen(config.serverPort)
+debug(`Server is now running at http://${config.serverHost}:${config.serverPort}.`)

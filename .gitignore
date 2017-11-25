@@ -3,7 +3,8 @@
 *.log.*
 
 node_modules
-config/local.json
 dist
+tmp
+lib
 coverage
 .idea/

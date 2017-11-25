@@ -1,29 +1,37 @@
-// Here is where you can define configuration overrides based on the execution environment.
-// Supply a key to the default export matching the NODE_ENV that you wish to target, and
-// the base configuration will apply your overrides before exporting itself.
+var defaultConfig = {
+  compiler_babel: {
+    cacheDirectory: true,
+    plugins: [
+      ['transform-runtime', { 'polyfill': false, 'regenerator': true }]
+    ],
+    presets: ['es2015', 'react', 'stage-0']
+  },
+  compiler_devtool: 'source-map',
+  compiler_hash_type: 'hash',
+  compiler_fail_on_warning: true,
+  compiler_quiet: false,
+  compiler_stats: {
+    chunks: false,
+    chunkModules: false,
+    colors: true
+  },
+  compiler_vendors: ['react', 'react-redux', 'react-router', 'redux']
+}
 module.exports = {
   // ======================================================
   // Overrides when NODE_ENV === 'development'
   // ======================================================
-  // NOTE: In development, we use an explicit public path when the assets
-  // are served webpack by to fix this issue:
-  // http://stackoverflow.com/questions/34133808/webpack-ots-parsing-error-loading-fonts/34133809#34133809
-  development: (config) => ({
-    compiler_public_path: `http://${config.server_host}:${config.server_port}/`
+  development: () => Object.assign(defaultConfig, {}),
+  // ======================================================
+  // Overrides when NODE_ENV === 'test'
+  // ======================================================
+  test: () => Object.assign(defaultConfig, {
+    compiler_devtool: null
   }),
-
   // ======================================================
   // Overrides when NODE_ENV === 'production'
   // ======================================================
-  test: (config) => ({
-    compiler_public_path: '/'
-  }),
-
-  // ======================================================
-  // Overrides when NODE_ENV === 'production'
-  // ======================================================
-  production: (config) => ({
-    compiler_public_path: '/',
+  production: () => Object.assign(defaultConfig, {
     compiler_fail_on_warning: false,
     compiler_hash_type: 'chunkhash',
     compiler_devtool: null,

@@ -1,9 +1,7 @@
 import { registerData } from '../store/data'
 import { connect } from 'react-redux'
-import { replaceLink, goBack } from './tools'
-import { hashHistory } from 'react-router'
-import { load, loaded, toast } from './Events'
-window.Promise = require('promise')
+import { browserHistory } from 'react-router'
+import { load, loaded } from './Events'
 
 var Common = {
   allowInit(config) {
@@ -42,7 +40,7 @@ var Common = {
         for (let i = 0; i < data.length; i++) {
           let KEY = data[i].KEY
           let name = data[i].option ? 'option' : KEY
-          result[name] = state.data.get(KEY)
+          result[name] = state.data[KEY]
         }
         return result
       }
@@ -55,13 +53,13 @@ var Common = {
   locationNum: 0,
   isCallBack: false,
   locationPush() {
-    this.locationNum++
-      this.isCallBack = false
+    this.locationNum = this.locationNum + 1
+    this.isCallBack = false
   },
   locationPop() {
     if (this.locationNum > 0) {
-      this.locationNum--
-        this.isCallBack = true
+      this.locationNum = this.locationNum - 1
+      this.isCallBack = true
     }
   },
   locationReplace() {
@@ -78,6 +76,6 @@ var Common = {
     this.pageChange()
   }
 }
-hashHistory.listen(Common.locationChange.bind(Common))
+browserHistory.listen(Common.locationChange.bind(Common))
 
 export default Common

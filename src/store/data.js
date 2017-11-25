@@ -1,16 +1,24 @@
-import { Map } from 'immutable'
+import * as user from './data/user'
 
+// 封装一个综合reducer用于处理页面级别缓存而无需建立多个reducer
 const DATA_INIT = 'DATA_INIT'
 
-// 对订单和用户数据进行初始化
-var dataTable = {}
+// 对用户数据进行初始化
+var dataTable = {
+  [user.KEY]: user.default
+}
 var initState = function () {
-  return Map()
+  let userData = user.initState
+  let userInfo = user.getLocal()
+  userData.login = !!userInfo
+  userData.info = userInfo || {}
+  return {
+    [user.KEY]: userData
+  }
 }
 var stateList = []
 var initNum = 0
-
-export function registerData (store, reducers) {
+export function registerData(store, reducers) {
   let init = false
   for (let i = 0; i < reducers.length; i++) {
     let reducer = reducers[i]
@@ -26,15 +34,13 @@ export function registerData (store, reducers) {
     })
   }
 }
-
 export default function (state = initState(), action) {
   if (action.type === DATA_INIT) {
     let num = 0
     for (let k = stateList.length - 1; k >= initNum; k--) {
       let reducer = stateList[k]
-      if (state.get(reducer.KEY)) {
-      } else {
-        state = state.set(reducer.KEY, reducer.initState)
+      if (!state[reducer.KEY]) {
+        state[reducer.KEY] = reducer.initState
         num += 1
       }
     }
@@ -42,8 +48,10 @@ export default function (state = initState(), action) {
   } else {
     let KEY = action.KEY
     if (KEY) {
-      state = state.set(KEY, dataTable[KEY](state.get(KEY), action))
+      state[KEY] = dataTable[KEY](state[KEY], action)
     }
   }
-  return state
+  return {
+    ...state
+  }
 }

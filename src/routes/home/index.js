@@ -1,10 +1,14 @@
 import Common from '../../lib/Common'
-
+/**
+ * 首页
+ */
 export const config = {
   path: '/',
-  name: '首页'
+  title: 'index',
+  description: 'index',
+  keyword: 'index',
+  needLogin: false
 }
-
 export default (store) => ({
   onEnter: (props, replace) => {
     Common.pageEnter(config, store, props, replace)
@@ -12,7 +16,7 @@ export default (store) => ({
   onLeave: (props, replace) => {
     Common.pageLeave(config, store, props, replace)
   },
-  getComponent (nextState, cb) {
+  getComponent(nextState, cb) {
     require.ensure([], (require) => {
       const base = require('../../store/data/base')
       const page = require('./page').default

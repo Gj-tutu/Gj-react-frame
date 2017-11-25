@@ -1,230 +1,169 @@
 const webpack = require('webpack')
 const cssnano = require('cssnano')
 const pxtorem = require('postcss-pxtorem')
-const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const WebpackMd5Hash = require('webpack-md5-hash');
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const config = require('../config')
 const debug = require('debug')('app:webpack:config')
-const glob = require('glob')
-
 const paths = config.utils_paths
 const __DEV__ = config.globals.__DEV__
-const __APP__ = config.globals.__APP__
 const __PROD__ = config.globals.__PROD__
 const __TEST__ = config.globals.__TEST__
 
-// 区分app路径，app需要相对路径
-function compiler_public_path () {
-  if (config.app) return './'
-  return config.compiler_public_path
-}
-// 区分app静态文件保存格式，app不需要hash等文件名处理
-function fileNameFormat (type, ext) {
+function fileNameFormat(type, ext) {
   ext = ext || '[ext]'
-  return config.app ? `[name].${ext}` : `src/[name].[${type}].${ext}`
+  return `src/[name].[${type}].${ext}`
 }
-
 debug('Creating configuration.')
 const webpackConfig = {
   name: 'client',
   target: 'web',
   devtool: config.compiler_devtool,
   resolve: {
-    root: paths.client(),
-    extensions: ['', '.web.js', '.js', '.jsx', '.json']
+    extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.ts', '.tsx', '.js', '.jsx', '.json']
   },
   module: {}
 }
-// ------------------------------------
-// Entry Points
-// ------------------------------------
-const APP_ENTRY = paths.client('main.js')
 
+const APP_ENTRY = paths.client('main.js')
 webpackConfig.entry = {
-  app: (__DEV__ && !__APP__)
-    ? [APP_ENTRY].concat(`webpack-hot-middleware/client?path=${compiler_public_path()}__webpack_hmr`)
-    : [APP_ENTRY],
+  app: (__DEV__) ? [APP_ENTRY].concat(`webpack-hot-middleware/client?path=${config.public_path}__webpack_hmr`) : [APP_ENTRY],
   vendor: config.compiler_vendors
 }
 
-// ------------------------------------
-// Bundle Output
-// ------------------------------------
+webpackConfig.stats = 'none'
+
 webpackConfig.output = {
   filename: fileNameFormat(config.compiler_hash_type, 'js'),
-  path: paths.tmp(),
-  publicPath: compiler_public_path(),
+  path: paths.dist(),
+  publicPath: config.public_path,
   chunkFilename: fileNameFormat(config.compiler_hash_type, 'js')
 }
 
-// ------------------------------------
-// Plugins
-// ------------------------------------
 webpackConfig.plugins = [
   new webpack.DefinePlugin(config.globals),
+  new CleanWebpackPlugin([paths.dist('*')]),
+  new webpack.ProgressPlugin(),
+  new webpack.DllReferencePlugin({
+    context: paths.lib(),
+    manifest: require(paths.lib('manifest.json')),
+    extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.ts', '.tsx', '.js', '.jsx', '.json']
+  }),
   new HtmlWebpackPlugin({
     template: paths.client('index.html'),
     hash: false,
-    favicon: paths.client('static/favicon.ico'),
-    filename: 'index.html',
-    inject: 'body',
     minify: {
       collapseWhitespace: true
     },
-    globals: config.globals
-  })
-]
-
-if (__DEV__ && !__APP__) {
-  debug('Enable plugins for live development (HMR, NoErrors).')
-  webpackConfig.plugins.push(
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  )
-} else if (__PROD__ || __TEST__) {
-  debug('Enable plugins for production (OccurenceOrder, Dedupe & UglifyJS).')
-  webpackConfig.plugins.push(
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.DedupePlugin()
-  )
-  if (__PROD__) {
-    webpackConfig.plugins.push(
-      new webpack.optimize.CommonsChunkPlugin({
-        name: ['vendor'],
-        minChunks: function (module, count) {
-          // any required modules inside node_modules are extracted to vendor
-          return (
-            module.resource &&
-            /\.js$/.test(module.resource) &&
-            module.resource.indexOf(
-              path.join(__dirname, '../node_modules')
-            ) === 0
-          )
-        }
-      }),
-      // extract webpack runtime and module manifest to its own file in order to
-      // prevent vendor hash from being updated whenever app bundle is updated
-      // new webpack.optimize.CommonsChunkPlugin({
-      //   name: 'manifest',
-      //   chunks: ['vendor']
-      // }),
-      new webpack.optimize.UglifyJsPlugin({
-        compress: {
-          warnings: false
-        }
-      }),
-      new ExtractTextPlugin(fileNameFormat(config.compiler_hash_type, 'css'), {
-        allChunks: true
-      })
-      // new WebpackMd5Hash()
-    )
-  }
-}
-
-const svgDirs = [] // 如果需要本地部署图标，需要在此加入本地图标路径，本地部署方式见以下文档
-// 把`antd-mobile/lib`目录下的 svg 文件加入进来，给 svg-sprite-loader 插件处理
-glob.sync('node_modules/**/*antd-mobile/lib', { dot: true }).forEach(p => {
-  svgDirs.push(new RegExp(p))
-})
-// ------------------------------------
-// Loaders
-// ------------------------------------
-// File loaders
-// JavaScript / JSON
-webpackConfig.module.loaders = [
-  {
-    test: /\.(js|jsx)$/,
-    exclude: /node_modules/,
-    loader: 'babel',
-    query: config.compiler_babel
-  },
-  {
-    test: /\.json$/,
-    loader: 'json'
-  },
-  // ...
-  // 注意：如果有其他 svg loader 设置，请 exclude 掉这里的 svgDirs 目录。
-  // 少数情况下，如果你的项目能预见到所有 svg 图标都需要 svg-sprite 处理，你可以不设置 include ，也即不需要枚举 svg 文件路径
-  { test: /\.svg$/, loader: 'svg-sprite', include: svgDirs },
-  {
-    test: /\.(svg)(\?.*)?$/,
-    include: paths.client(),
-    loader: 'url',
-    query: {
-      limit: 10240,
-      name: fileNameFormat('hash')
-    }
-  },
-  {
-    test: /\.(png|jpe?g|gif)(\?.*)?$/,
-    loader: 'url',
-    query: {
-      limit: 10240,
-      name: fileNameFormat('hash')
-    }
-  },
-  {
-    test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-    loader: 'url',
-    query: {
-      limit: 10240,
-      name: fileNameFormat('hash')
-    }
-  }
-]
-
-function loaderAnalysis (loaders) {
-  if (__PROD__) {
-    return ExtractTextPlugin.extract(loaders.shift(), loaders.join('!'))
-  }
-  return loaders.join('!')
-}
-
-// ------------------------------------
-// Style Loaders
-// ------------------------------------
-// We use cssnano with the postcss loader, so we tell
-// css-loader not to duplicate minimization.
-webpackConfig.module.loaders.push({
-  test: /\.less$/,
-  exclude: null,
-  loader: loaderAnalysis(['style-loader', 'css-loader', 'postcss-loader', 'less-loader'])
-})
-
-webpackConfig.module.loaders.push({
-  test: /\.css$/,
-  exclude: null,
-  loader: loaderAnalysis(['style-loader', 'css-loader', 'postcss-loader'])
-})
-
-webpackConfig.postcss = [
-  cssnano({
-    autoprefixer: {
-      add: true,
-      browsers: ['last 5 versions']
-    },
-    discardComments: {
-      removeAll: true
-    },
-    discardUnused: false,
-    mergeIdents: false,
-    reduceIdents: false,
-    safe: true,
-    sourcemap: true
+    title: config.title,
+    filename: 'index.html',
+    inject: 'body',
+    globals: Object.assign(config.globals, {
+      keyword: config.keyword,
+      description: config.description,
+      scripts: config.scripts
+    })
   }),
-  pxtorem({
-    rootValue: 100,
-    propWhiteList: []
+  new webpack.LoaderOptionsPlugin({
+    options: {
+      postcss: function () {
+        return [
+          cssnano({
+            autoprefixer: {
+              add: true,
+              browsers: ['iOS >= 7', 'Android >= 4.1']
+            },
+            discardComments: {
+              removeAll: true
+            },
+            discardUnused: false,
+            mergeIdents: false,
+            reduceIdents: false,
+            safe: true,
+            sourcemap: true
+          }),
+          pxtorem({
+            rootValue: 50,
+            propWhiteList: []
+          })
+        ]
+      }
+    }
   })
 ]
-/* eslint-disable */
+if (__DEV__) {
+  webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin(), new webpack.NoEmitOnErrorsPlugin())
+} else {
+  webpackConfig.plugins.push(new webpack.optimize.OccurrenceOrderPlugin())
+  webpackConfig.plugins.push(new webpack.optimize.CommonsChunkPlugin({
+    name: ['vendor'],
+    minChunks: function (module, count) {
+      return module.context && module.context.indexOf('node_modules') !== -1
+    }
+  }), new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: false
+    }
+  }), new ExtractTextPlugin(fileNameFormat(config.compiler_hash_type, 'css'), {
+    allChunks: true
+  }))
+}
 
-/* eslint-enable */
+webpackConfig.module.rules = [{
+  test: /\.(js|jsx)$/,
+  exclude: /node_modules/,
+  use: ['babel-loader', 'eslint-loader']
+}, {
+  test: /\.json$/,
+  use: 'json-loader'
+}, {
+  test: /\.(svg)(\?.*)?$/,
+  include: paths.client(),
+  use: {
+    loader: 'url-loader',
+    options: {
+      limit: 10240,
+      name: fileNameFormat('hash')
+    }
+  }
+}, {
+  test: /\.(png|jpe?g|gif)(\?.*)?$/,
+  use: {
+    loader: 'url-loader',
+    options: {
+      limit: 10240,
+      name: fileNameFormat('hash')
+    }
+  }
+}, {
+  test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+  use: {
+    loader: 'url-loader',
+    options: {
+      limit: 10240,
+      name: fileNameFormat('hash')
+    }
+  }
+}]
 
-// ------------------------------------
-// Finalize Configuration
-// ------------------------------------
+function loaderAnalysis(loaders) {
+  if (__PROD__) {
+    return ExtractTextPlugin.extract({
+      fallback: loaders.shift(),
+      use: loaders
+    })
+  }
+  return loaders
+}
+
+webpackConfig.module.rules.push({
+  test: /\.css$/,
+  use: loaderAnalysis(['style-loader', 'css-loader', 'postcss-loader'])
+})
+webpackConfig.module.rules.push({
+  test: /\.less$/,
+  use: loaderAnalysis(['style-loader', 'css-loader', 'postcss-loader', 'less-loader'])
+})
 
 module.exports = webpackConfig

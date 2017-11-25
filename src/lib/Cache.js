@@ -1,47 +1,52 @@
-
+/**
+ * 本地缓存类,可配置缓存时间,长久保存
+ */
 class CacheManage {
   cacheMap = {}
-
-  constructor () {
+  constructor() {
     this.cacheMap = {}
   }
-
-  getCache (key, local) {
+  getCache(key, local) {
+    /**
+     * 获取缓存
+     * key 密钥
+     * local 是否本地缓存
+     */
     if (!this.cacheMap[key]) {
       this.cacheMap[key] = CacheManage.makeCache(key)
     }
     return this.cacheMap[key].getCache(local)
   }
-
-  setCache (key, value, time, local) {
-    if (!time) return null
+  setCache(key, value, time, local) {
+    /**
+     * 设置缓存
+     * key 密钥
+     * value 值
+     * time 缓存时间
+     * local 是否本地缓存
+     */
     if (!this.cacheMap[key]) {
       this.cacheMap[key] = CacheManage.makeCache(key)
     }
     this.cacheMap[key].setCache(value, time, local)
   }
-
-  removeCache (key, local) {
+  removeCache(key, local) {
     if (this.cacheMap[key]) {
       this.cacheMap[key].clearCache(local)
     }
   }
-
-  static getApiCacheKey (api, data) {
+  static getApiCacheKey(api, data) {
     return ''
   }
-
-  static makeCache (key) {
+  static makeCache(key) {
     return new Cache(key)
   }
 }
-
 class localStorageEngine {
   ok = false
   key = ''
   expTime = 0
-
-  constructor () {
+  constructor() {
     try {
       if (window.localStorage) {
         this.ok = true
@@ -50,8 +55,7 @@ class localStorageEngine {
       console.log('localStorage not exist')
     }
   }
-
-  getItem () {
+  getItem() {
     if (this.ok) {
       let value = window.localStorage.getItem(this.key)
       if (value && value !== 'undefined') {
@@ -65,19 +69,16 @@ class localStorageEngine {
       return null
     }
   }
-
-  setItem (time, value) {
+  setItem(time, value) {
     if (this.ok) {
       value = JSON.stringify({ data: value, expTime: time })
       window.localStorage.setItem(this.key, value)
-      this.expTime = time
       return true
     } else {
       return false
     }
   }
-
-  removeItem () {
+  removeItem() {
     if (this.ok) {
       window.localStorage.removeItem(this.key)
       this.expTime = 0
@@ -87,43 +88,39 @@ class localStorageEngine {
     }
   }
 }
-
 class Cache extends localStorageEngine {
   value = null
-  constructor (key) {
+  constructor(key) {
     super()
     this.key = key
   }
-
-  setCache (value, time, local) {
-    this.expTime = Date.nowTime() + time
+  setCache(value, time, local) {
+    if (time) {
+      this.expTime = Math.ceil(Date.now() / 1000) + time
+    }
     this.value = value
     if (local) {
       this.setItem(this.expTime, value)
     }
   }
-
-  getCache (local) {
+  getCache(local) {
     if (this.hasCache(local)) {
       return this.value
     } else {
       return null
     }
   }
-
-  clearCache (local) {
+  clearCache(local) {
     this.value = null
     if (local) this.removeItem()
   }
-
-  hasCache (local) {
+  hasCache(local) {
     if (!this.value && local) this.value = this.getItem()
-    if (this.expTime && Date.nowTime() > this.expTime) {
+    if (this.expTime !== 0 && Math.ceil(Date.now() / 1000) > this.expTime) {
       this.clearCache(local)
       return false
     }
     return !!this.value
   }
 }
-
 export default CacheManage
