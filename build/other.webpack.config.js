@@ -35,7 +35,7 @@ module.exports = {
     new CleanWebpackPlugin(['*'], {
       root: paths.lib()
     }),
-    new webpack.ProgressPlugin(),
+    // new webpack.ProgressPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {

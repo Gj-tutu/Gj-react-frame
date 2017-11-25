@@ -19,7 +19,8 @@ debug('Creating configuration.')
 const webpackConfig = {
   name: 'client',
   target: 'web',
-  devtool: config.compiler_devtool,
+  cache: true,
+  devtool: 'eval',
   resolve: {
     extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.ts', '.tsx', '.js', '.jsx', '.json']
   },
@@ -46,7 +47,7 @@ webpackConfig.plugins = [
   new CleanWebpackPlugin(['*'], {
     root: paths.dist()
   }),
-  new webpack.ProgressPlugin(),
+  // new webpack.ProgressPlugin(),
   new webpack.DllReferencePlugin({
     context: paths.lib(),
     manifest: require(paths.lib('manifest.json')),
