@@ -43,7 +43,9 @@ webpackConfig.output = {
 
 webpackConfig.plugins = [
   new webpack.DefinePlugin(config.globals),
-  new CleanWebpackPlugin([paths.dist('*')]),
+  new CleanWebpackPlugin(['*'], {
+    root: paths.dist()
+  }),
   new webpack.ProgressPlugin(),
   new webpack.DllReferencePlugin({
     context: paths.lib(),

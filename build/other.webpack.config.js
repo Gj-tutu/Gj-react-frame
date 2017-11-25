@@ -18,7 +18,7 @@ const vendors = [
   'react-dom',
   'react-router'
 ]
-console.log(paths.lib('*'))
+
 module.exports = {
   output: {
     filename: '[name]_[hash].js',
@@ -32,7 +32,9 @@ module.exports = {
     'lib': vendors
   },
   plugins: [
-    new CleanWebpackPlugin([paths.lib('*')]),
+    new CleanWebpackPlugin(['*'], {
+      root: paths.lib()
+    }),
     new webpack.ProgressPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
