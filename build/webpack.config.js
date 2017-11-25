@@ -98,7 +98,6 @@ webpackConfig.plugins = [
 if (__DEV__) {
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin(), new webpack.NoEmitOnErrorsPlugin())
 } else {
-  webpackConfig.plugins.push(new webpack.optimize.OccurrenceOrderPlugin())
   webpackConfig.plugins.push(new webpack.optimize.CommonsChunkPlugin({
     name: ['vendor'],
     minChunks: function (module, count) {
