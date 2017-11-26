@@ -107,7 +107,8 @@ if (__DEV__) {
     compress: {
       warnings: false
     }
-  }), new ExtractTextPlugin(fileNameFormat(config.compiler_hash_type, 'css'), {
+  }), new ExtractTextPlugin({
+    filename: fileNameFormat(config.compiler_hash_type, 'css'),
     allChunks: true
   }))
 }
