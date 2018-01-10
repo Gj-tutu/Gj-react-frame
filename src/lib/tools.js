@@ -98,10 +98,7 @@ export function checkEmail(s) {
     return false
   }
 }
-var loadFindifyList = []
-var findifyHandleKey = null
-
-function loadScript(url, callback) {
+export function loadScript(url, callback) {
   var script = document.createElement('script')
   script.type = 'text/javascript'
   script.async = true
@@ -121,58 +118,4 @@ function loadScript(url, callback) {
   script.src = url
   let head = document.getElementsByTagName('head')[0]
   head.appendChild(script)
-}
-
-export function trackEvent(eventCategory, eventAction, eventLabel, eventValue) {
-  if (ga) ga('send', 'event', { eventCategory, eventAction, eventLabel: eventValue ? `${eventLabel} - ${eventValue}` : eventLabel })
-}
-
-export function sendErrorMessage(message) {
-  if (Raven) Raven.captureException(new Error(message))
-}
-
-export function loadFindify() {
-  loadScript(__FINDIFY__)
-}
-
-function findifyHandle() {
-  if (findifyHandleKey) return
-  if (window.findifyCreateFeature && window.findifyAnalyticsInstance) {
-    for (let i = 0; i < loadFindifyList.length; i++) {
-      window.findifyCreateFeature(loadFindifyList[i].e, loadFindifyList[i].t)
-      if (loadFindifyList[i].h) loadFindifyList[i].h()
-    }
-  } else {
-    findifyHandleKey = setTimeout(function () {
-      findifyHandleKey = null
-      findifyHandle()
-    }, 100)
-  }
-}
-export function findifyCreate(e, t, h) {
-  loadFindifyList.push({ e: e, t: t, h: h })
-  findifyHandle()
-}
-const colorMap = {
-  black: '#000',
-  blue: '#4A90E2',
-  brown: '#98897B',
-  gold: '#E8DEC8',
-  gray: '#C5C5C5',
-  green: '#21D3BE',
-  orange: '#FFA300',
-  pink: '#FF8B8B',
-  purple: '#BD10E0',
-  red: '#FF001F',
-  white: '#FFF',
-  yellow: '#FBE71C'
-}
-export function getColor(colorTag) {
-  return colorMap[colorTag] || '#fff'
-}
-
-export function formatId(id) {
-  if (!id) return ''
-  let p = atob(id).split('/')
-  return p[p.length - 1].split('?')[0]
 }

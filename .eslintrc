@@ -10,13 +10,7 @@
     "__TEST__": false,
     "__PROD__": false,
     "__DEBUG__": false,
-    "__API_PATH__": false,
-    "__GRAPHQL_PATH__": false,
-    "__PLATFORM__": false,
-    "__FINDIFY__": false,
-    "ga": false,
-    "Pace": false,
-    "Raven": false
+    "__API_PATH__": false
   },
   "rules": {
     "camelcase": 0,

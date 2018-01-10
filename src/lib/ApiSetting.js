@@ -6,8 +6,8 @@ export const POST = 'post'
 export const GET = 'get'
 export const PUT = 'put'
 export const DELETE = 'delete'
-export const FORM = 'formData'
-export const UPLOAD = 'formField'
+export const UPLOAD = 'upload'
+export const FORM = 'form'
 const ApiSetting = {}
 export default ApiSetting
 export const ApiPath = __API_PATH__
