@@ -21,6 +21,7 @@
     "other": {
       "command": "node bin/other",
       "env": {
+        "NODE_ENV": "production",
         "DEBUG": "app:*"
       }
     },
