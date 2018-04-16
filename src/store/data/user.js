@@ -36,12 +36,6 @@ export function login(email, password) {
           value: result
         }
       })
-
-      // {
-      //   email: '',
-      //   firstName: '',
-      //   lastName: ''
-      // }
       return result
     })
   }
@@ -56,12 +50,6 @@ export function register(email, password, firstName, lastName) {
           value: result
         }
       })
-
-      // {
-      //   email: '',
-      //   firstName: '',
-      //   lastName: ''
-      // }
       return result
     })
   }
@@ -76,8 +64,6 @@ export function logout() {
           value: result
         }
       })
-
-      // {}
       return result
     })
   }
@@ -92,12 +78,6 @@ export function info() {
           value: result
         }
       })
-
-      // {
-      //   email: '',
-      //   firstName: '',
-      //   lastName: ''
-      // }
       return result
     })
   }

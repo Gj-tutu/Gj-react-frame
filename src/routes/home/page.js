@@ -11,7 +11,7 @@ export default class Home extends Page {
 
   renderView() {
     return (
-      <div className='home'>首页111</div>
+      <div className='home'>首页</div>
     )
   }
 }
