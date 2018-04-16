@@ -9,7 +9,6 @@ const debug = require('debug')('app:webpack:config')
 const paths = config.utils_paths
 const __DEV__ = config.globals.__DEV__
 const __PROD__ = config.globals.__PROD__
-const __TEST__ = config.globals.__TEST__
 
 function fileNameFormat(type, ext) {
   ext = ext || '[ext]'
@@ -29,8 +28,7 @@ const webpackConfig = {
 
 const APP_ENTRY = paths.client('main.js')
 webpackConfig.entry = {
-  app: (__DEV__) ? [APP_ENTRY].concat(`webpack-hot-middleware/client?path=${config.public_path}__webpack_hmr`) : [APP_ENTRY],
-  vendor: config.compiler_vendors
+  app: (__DEV__) ? [APP_ENTRY].concat(`webpack-hot-middleware/client?path=${config.public_path}__webpack_hmr`) : [APP_ENTRY]
 }
 
 webpackConfig.stats = 'none'
@@ -98,25 +96,30 @@ webpackConfig.plugins = [
 if (__DEV__) {
   webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin(), new webpack.NoEmitOnErrorsPlugin())
 } else {
-  webpackConfig.plugins.push(new webpack.optimize.CommonsChunkPlugin({
-    name: ['vendor'],
-    minChunks: function (module, count) {
-      return module.context && module.context.indexOf('node_modules') !== -1
-    }
-  }), new webpack.optimize.UglifyJsPlugin({
-    compress: {
-      warnings: false
-    }
-  }), new ExtractTextPlugin({
-    filename: fileNameFormat(config.compiler_hash_type, 'css'),
-    allChunks: true
-  }))
+  webpackConfig.plugins.push(
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   name: ['app'],
+    //   minChunks: function (module, count) {
+    //     return module.context && module.context.indexOf('node_modules') !== -1
+    //   }
+    // }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      }
+    }), new ExtractTextPlugin({
+      filename: fileNameFormat(config.compiler_hash_type, 'css'),
+      allChunks: true
+    }))
 }
 
 webpackConfig.module.rules = [{
   test: /\.(js|jsx)$/,
   exclude: /node_modules/,
   use: ['babel-loader', 'eslint-loader']
+}, {
+  test: /\.yml$/,
+  use: ['json-loader', 'yaml-loader']
 }, {
   test: /\.json$/,
   use: 'json-loader'

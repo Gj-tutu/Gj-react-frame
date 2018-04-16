@@ -1,8 +1,6 @@
 /**
  * 统一事件分发类
  */
-import Env from './Env'
-window.Env = Env
 
 // 事件列表
 export function load(text) {

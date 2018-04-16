@@ -1,18 +1,13 @@
 import { registerData } from '../store/data'
 import { connect } from 'react-redux'
 import { browserHistory } from 'react-router'
-import { load, loaded } from './Events'
 
 var Common = {
   allowInit(config) {
     return true
   },
-  pageChange(e) {
-    load()
-  },
-  pageChangeEnd() {
-    loaded(false)
-  },
+  pageChange(e) {},
+  pageChangeEnd() {},
   pageEnter(config, store, props, replace) {
 
   },

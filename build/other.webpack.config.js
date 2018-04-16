@@ -32,6 +32,7 @@ module.exports = {
     'lib': vendors
   },
   plugins: [
+    new webpack.DefinePlugin(config.globals),
     new CleanWebpackPlugin(['*'], {
       root: paths.lib()
     }),

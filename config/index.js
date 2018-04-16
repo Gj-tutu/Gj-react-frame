@@ -1,38 +1,8 @@
 const path = require('path')
 const fs = require('fs')
 const debug = require('debug')('app:config')
-var config = {
-  'development': {
-    serverHost: '127.0.0.1',
-    serverPort: 3000,
-    title: '',
-    description: '',
-    keyword: '',
-    scripts: [],
-    public_path: '/',
-    proxy: []
-  },
-  'test': {
-    serverHost: '127.0.0.1',
-    serverPort: 3000,
-    title: '',
-    description: '',
-    keyword: '',
-    scripts: [],
-    public_path: '/',
-    proxy: []
-  },
-  'production': {
-    serverHost: '127.0.0.1',
-    serverPort: 3000,
-    title: '',
-    description: '',
-    keyword: '',
-    scripts: [],
-    public_path: '/',
-    proxy: []
-  }
-}
+var config = require('./local')
+
 const NODE_ENV = process.env.NODE_ENV || 'development'
 
 debug('Creating default configuration.')

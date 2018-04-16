@@ -16,6 +16,7 @@ const compile = () => {
       }
       debug('Copying static assets to dist folder.')
       fs.copySync(paths.client('static'), paths.dist())
+      fs.copySync(paths.client('assets'), paths.dist('assets'))
       fs.copySync(paths.lib(), paths.dist())
     })
     .then(() => {

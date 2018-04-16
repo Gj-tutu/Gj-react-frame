@@ -1,3 +1,5 @@
+import Env from './lib/Env'
+window.Env = Env
 import React from 'react'
 import ReactDOM from 'react-dom'
 import createStore from './store/createStore'

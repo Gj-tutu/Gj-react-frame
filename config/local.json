@@ -1,0 +1,32 @@
+{
+  "development": {
+    "serverHost": "127.0.0.1",
+    "serverPort": 3000,
+    "title": "",
+    "description": "",
+    "keyword": "",
+    "scripts": [],
+    "public_path": "/",
+    "proxy": []
+  },
+  "test": {
+    "serverHost": "127.0.0.1",
+    "serverPort": 3000,
+    "title": "",
+    "description": "",
+    "keyword": "",
+    "scripts": [],
+    "public_path": "/",
+    "proxy": []
+  },
+  "production": {
+    "serverHost": "127.0.0.1",
+    "serverPort": 3000,
+    "title": "",
+    "description": "",
+    "keyword": "",
+    "scripts": [],
+    "public_path": "/",
+    "proxy": []
+  }
+}

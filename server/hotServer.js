@@ -33,6 +33,7 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 debug('start hot server!')
 app.use(require('webpack-hot-middleware')(compiler))
+app.use('/assets', express.static(paths.client('assets')))
 app.use(express.static(paths.client('static')))
 app.use(express.static(paths.lib()))
 module.exports = app

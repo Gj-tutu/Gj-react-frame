@@ -125,6 +125,7 @@
     "webpack": "^3.8.1",
     "webpack-dev-middleware": "^1.12.1",
     "webpack-dev-server": "^2.9.4",
-    "webpack-hot-middleware": "^2.20.0"
+    "webpack-hot-middleware": "^2.20.0",
+    "yaml-loader": "^0.5.0"
   }
 }
