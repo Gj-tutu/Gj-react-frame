@@ -1,4 +1,4 @@
-import Common from '../../lib/Common'
+import Common from '../../services/Common'
 export const config = {
   path: '404',
   title: 'Page Not Found'

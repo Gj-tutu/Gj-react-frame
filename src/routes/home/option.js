@@ -1,8 +1,9 @@
+import { config } from './index'
 /**
  * Constants
  */
 
-export const KEY = 'home-option'
+export const KEY = `${config.key}-option`
 export const option = true
 
 /**

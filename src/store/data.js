@@ -1,19 +1,22 @@
-import * as user from './data/user'
+import * as account from './data/account'
+import * as base from './data/base'
 
 // 封装一个综合reducer用于处理页面级别缓存而无需建立多个reducer
 const DATA_INIT = 'DATA_INIT'
 
 // 对用户数据进行初始化
 var dataTable = {
-  [user.KEY]: user.default
+  [account.KEY]: account.default,
+  [base.KEY]: base.default
 }
 var initState = function () {
-  let userData = user.initState
-  let userInfo = user.getLocal()
+  let userData = account.initState
+  let userInfo = account.getLocal()
   userData.login = !!userInfo
   userData.info = userInfo || {}
   return {
-    [user.KEY]: userData
+    [account.KEY]: userData,
+    [base.KEY]: base.initState
   }
 }
 var stateList = []

@@ -112,7 +112,7 @@
 
 ##### 扩展服务类:
 
->目录 src/lib
+>目录 src/services
 
 >Api 封装项目api请求,简化ajax的使用
 

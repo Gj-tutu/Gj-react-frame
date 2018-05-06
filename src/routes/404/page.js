@@ -2,7 +2,7 @@ import React from 'react'
 import Page from '../../containers/Page'
 import { config } from './index'
 import './index.less'
-import { loaded } from '../../lib/Events'
+import { loaded } from '../../services/Events'
 
 export default class extends Page {
 

@@ -1,8 +1,9 @@
-import Common from '../../../lib/Common'
+import Common from '../../../services/Common'
 
 export const config = {
-  path: 'template/test',
-  name: '模板'
+  path: 'template',
+  name: '模板',
+  key: 'template'
 }
 
 export default (store) => ({
@@ -13,7 +14,7 @@ export default (store) => ({
   onLeave: (props, replace) => {
     Common.pageLeave(config, store, props, replace)
   },
-  getComponent (nextState, cb) {
+  getComponent(nextState, cb) {
     require.ensure([], (require) => {
       const base = require('../../../store/data/base')
       const page = require('./page').default

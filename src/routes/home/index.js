@@ -1,9 +1,10 @@
-import Common from '../../lib/Common'
+import Common from '../../services/Common'
 /**
  * 首页
  */
 export const config = {
   path: '/',
+  key: 'index',
   title: 'index',
   description: 'index',
   keyword: 'index',

@@ -8,6 +8,11 @@ export const PUT = 'put'
 export const DELETE = 'delete'
 export const UPLOAD = 'upload'
 export const FORM = 'form'
-const ApiSetting = {}
+const ApiSetting = {
+  uploadNeedToken: {
+    url: '/common/upload/base',
+    method: POST
+  }
+}
 export default ApiSetting
 export const ApiPath = __API_PATH__

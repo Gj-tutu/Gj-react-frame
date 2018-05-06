@@ -10,7 +10,8 @@
     "__TEST__": false,
     "__PROD__": false,
     "__DEBUG__": false,
-    "__API_PATH__": false
+    "__API_PATH__": false,
+    "OSS": false
   },
   "rules": {
     "camelcase": 0,

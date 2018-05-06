@@ -9,60 +9,57 @@
   <meta name="keyword" content="<%= htmlWebpackPlugin.options.globals.keyword %>">
 
   <link rel="shortcut icon" href="/favicon.ico">
-  <meta charset="utf-8">
-  <script>
-    ! function(e) {
-      function t(a) {
-        if (i[a]) return i[a].exports;
-        var n = i[a] = {
-          exports: {},
-          id: a,
-          loaded: !1
-        };
-        return e[a].call(n.exports, n, n.exports, t), n.loaded = !0, n.exports
-      }
-      var i = {};
-      return t.m = e, t.c = i, t.p = "", t(0)
-    }([function(e, t) {
-      "use strict";
-      Object.defineProperty(t, "__esModule", {
-        value: !0
-      });
-      var i = window;
-      t["default"] = i.flex = function(e, t) {
-        var a = e || 100,
-          n = t || 1,
-          r = i.document,
-          o = navigator.userAgent,
-          d = o.match(/Android[\S\s]+AppleWebkit\/(\d{3})/i),
-          l = o.match(/U3\/((\d+|\.){5,})/i),
-          c = l && parseInt(l[1].split(".").join(""), 10) >= 80,
-          p = navigator.appVersion.match(/(iphone|ipad|ipod)/gi),
-          s = 1; //i.devicePixelRatio || 1;
-        p || d && d[1] > 534 || c || (s = 1);
-        var u = 1 / s,
-          m = r.querySelector('meta[name="viewport"]');
-        m || (m = r.createElement("meta"), m.setAttribute("name", "viewport"), r.head.appendChild(m)), m.setAttribute("content", "width=device-width,user-scalable=no,initial-scale=1,maximum-scale=" + u + ",minimum-scale=" + u), r.documentElement.style.fontSize = a / 2 * s * n + "px"
-      }, e.exports = t["default"]
-    }]);
-    flex(100, 1);
-    window.onresize = function() {
-      flex(100, 1);
-    }
-  </script>
 
-  <script src="/pace.min.js"></script>
-  <link href="/pace-theme-minimal.css" rel="stylesheet" />
+  <meta charset="utf-8">
 
   <% for (var i = 0; i < htmlWebpackPlugin.options.globals.scripts.length; i++) { %>
     <script type="text/javascript" src="<%= htmlWebpackPlugin.options.globals.scripts[i] %>"></script>
     <% } %>
 </head>
+<script>
+  ! function(e) {
+    function t(a) {
+      if (i[a]) return i[a].exports;
+      var n = i[a] = {
+        exports: {},
+        id: a,
+        loaded: !1
+      };
+      return e[a].call(n.exports, n, n.exports, t), n.loaded = !0, n.exports
+    }
+    var i = {};
+    return t.m = e, t.c = i, t.p = "", t(0)
+  }([function(e, t) {
+    "use strict";
+    Object.defineProperty(t, "__esModule", {
+      value: !0
+    });
+    var i = window;
+    t["default"] = i.flex = function(e, t) {
+      var a = e || 100,
+        n = t || 1,
+        r = i.document,
+        o = navigator.userAgent,
+        d = o.match(/Android[\S\s]+AppleWebkit\/(\d{3})/i),
+        l = o.match(/U3\/((\d+|\.){5,})/i),
+        c = l && parseInt(l[1].split(".").join(""), 10) >= 80,
+        p = navigator.appVersion.match(/(iphone|ipad|ipod)/gi),
+        s = 1; //i.devicePixelRatio || 1;
+      p || d && d[1] > 534 || c || (s = 1);
+      var u = 1 / s,
+        m = r.querySelector('meta[name="viewport"]');
+      m || (m = r.createElement("meta"), m.setAttribute("name", "viewport"), r.head.appendChild(m)), m.setAttribute("content", "width=device-width,user-scalable=no,initial-scale=1,maximum-scale=" + u + ",minimum-scale=" + u), r.documentElement.style.fontSize = a / 2 * s * n + "px"
+    }, e.exports = t["default"]
+  }]);
+  flex(100, 1);
+  window.onresize = function() {
+    flex(100, 1);
+  }
+</script>
 
 <body>
-  <div id="root" class="root"></div>
+  <div id="root"></div>
   <script>
-    /*fix android bug*/
     if (!Array.prototype.findIndex) {
       Object.defineProperty(Array.prototype, "findIndex", {
         value: function(predicate) {
@@ -116,14 +113,14 @@
     }
     Object.defineProperty(Array.prototype, 'has', {
       value: function(value) {
-        var _list = Object(this)
-        var _length = _list.length >>> 0
+        var _list = Object(this);
+        var _length = _list.length >>> 0;
         for (var i = 0; i < _length; i++) {
-          if (_list[i] === value) return i
+          if (_list[i] == value) return i
         }
         return -1
       }
-    })
+    });
     Date.prototype.format = function(format) {
       if (!format) format = 'yyyy-MM-dd';
       var o = {
@@ -141,8 +138,20 @@
       }
       return format
     };
+    Date.prototype.getRoughTime = function() {
+      return Math.ceil(this.getTime() / 1000)
+    };
+    Date.prototype.getDayTime = function() {
+      return Math.ceil(new Date(this.format()).getTime() / 1000)
+    };
+    Date.nowTime = function() {
+      return Math.ceil(Date.now() / 1000)
+    };
+    Date.todayTime = function() {
+      return Math.ceil(new Date(new Date().format()).getTime() / 1000)
+    }
   </script>
-
+  <script type="text/javascript" src="/aliyun-oss-sdk-4.4.4.min.js"></script>
 </body>
 
 </html>

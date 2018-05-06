@@ -2,15 +2,16 @@
  * http请求封装类
  */
 import { ApiPath, GET, FORM, UPLOAD } from './ApiSetting'
-import { load, loaded, fail } from './Events'
+import { load, loaded, fail, success } from './Events'
+import Common from './Common'
 const Request = require('superagent')
 
 class Api {
-  static request(api, data, showLoad = true, showLoaded = true, showFail = true) {
+  static request(api, data, loadOption = {}) {
     /**
      * 封装对外接口
      */
-    return Api.handle(api.url, { method: api.method, data: data, type: api.type, third: api.third }, showLoad, showLoaded, showFail)
+    return Api.handle(api.url, { method: api.method, data: data, type: api.type, third: api.third }, loadOption)
   }
   static send(url, option) {
     /**
@@ -54,14 +55,14 @@ class Api {
       request.timeout(30 * 1000)
         .end((error, response) => {
           if (error) {
-            reject(new Error('网络链接错误,服务暂时不可用'))
+            reject(new Error('网络不给力，请重试'))
           } else {
             resolve(response)
           }
         })
     })
   }
-  static handle(url, option, showLoad = true, showLoaded = true, showFail = true) {
+  static handle(url, option, { showLoad = true, showLoaded = false, showFail = true, loadedText = '' }) {
     /**
      * api处理流程封装
      */
@@ -71,17 +72,16 @@ class Api {
         if (response.ok) {
           return response.body
         } else {
-          throw new Error('网络链接错误,服务暂时不可用')
+          throw new Error('网络请求错误，请重试')
         }
       }).then((data) => {
-        // 第三方接口，自行处理
-        if (option.third) data.code = 200
-        if (data.code === 200) {
-          if (showLoad) loaded(showLoaded)
-          return option.third ? data : data.data
+        if (data.status === 200) {
+          if (showLoad) loaded(showLoaded, loadedText)
+          if (data.message) success(data.message)
+          return data.result
         } else {
-          if (data.status !== 500) {
-            throw new Error(data.message)
+          if (data.status == 401) {
+            Common.goToLogin()
           } else {
             throw new Error(data.message)
           }

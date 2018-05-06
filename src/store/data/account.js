@@ -1,6 +1,6 @@
-import Api from '../../lib/Api'
-import ApiSetting from '../../lib/ApiSetting'
-import Common from '../../lib/Common'
+import Api from '../../services/Api'
+import ApiSetting from '../../services/ApiSetting'
+import Common from '../../services/Common'
 /**
  * 用户相关接口,登录缓存,状态判断等
  */
@@ -78,6 +78,12 @@ export function info() {
           value: result
         }
       })
+
+      // {
+      //   email: '',
+      //   firstName: '',
+      //   lastName: ''
+      // }
       return result
     })
   }

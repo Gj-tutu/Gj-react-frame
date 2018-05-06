@@ -1,4 +1,4 @@
-import Env from './lib/Env'
+import Env from './services/Env'
 window.Env = Env
 import React from 'react'
 import ReactDOM from 'react-dom'

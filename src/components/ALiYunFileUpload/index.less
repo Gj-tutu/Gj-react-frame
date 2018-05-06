@@ -1,9 +1,37 @@
 @charset "utf-8";
 
-.file-upload{
+.file-upload.type-image{
+  border: 1px dashed #d9d9d9;
+  width: 100px;
+  height: 100px;
+  position: relative;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
   input{
     height: 100%;
     width: 100%;
     opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+  }
+  i {
+    font-size: 20px;
+    line-height: 100px;
+  }
+}
+.file-upload.type-file{
+  position: relative;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
+  input{
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
   }
 }

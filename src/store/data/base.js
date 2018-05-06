@@ -1,14 +1,20 @@
-import { linkTo, goBack, replaceLink } from '../../lib/Tools'
-
+import { linkTo, goBack, replaceLink } from '../../services/Tools'
+import Api from '../../services/Api'
+import ApiSetting from '../../services/ApiSetting'
+// ------------------------------------
+// Constants
+// ------------------------------------
 export const KEY = 'base'
+
 const REGISTER_CALL_BACK = 'REGISTER_CALL_BACK'
 const CALL_BACK = 'CALL_BACK'
+const CHANGE_SIZE = 'CHANGE_SIZE'
+const MAKE_CLIENT = 'MAKE_CLIENT'
+  // ------------------------------------
+  // Actions
+  // ------------------------------------
+
 export function registerCallBack(page, { init, callBack, needBack }, replace) {
-  /**
-   * 用于模仿原生app页面返回数据,配合callBack接口使用
-   * 在跳转页面前进行注册callback
-   * 之后用callback接口进行返回操作
-   */
   return (dispatch, getState) => {
     dispatch({
       KEY,
@@ -26,14 +32,11 @@ export function registerCallBack(page, { init, callBack, needBack }, replace) {
     }
   }
 }
+
 export function callBack(result) {
   return (dispatch, getState) => {
-    let pageCallBack = getState()
-      .data.get(KEY)
-      .pageCallBack
-    let needBack = getState()
-      .data.get(KEY)
-      .needBack
+    let pageCallBack = getState().data[KEY].pageCallBack
+    let needBack = getState().data[KEY].needBack
     dispatch({
       KEY,
       type: CALL_BACK
@@ -47,29 +50,48 @@ export function callBack(result) {
   }
 }
 
-function select(page, init, needBack, replace) {
-  /**
-   * 封装一个跳转选择接口
-   */
+export function upload(path, progress, file, key) {
   return (dispatch, getState) => {
-    return new Promise((resolve, reject) => {
-      dispatch(registerCallBack(page, {
-        init,
-        callBack: (result) => {
-          if (result) {
-            resolve(result)
-          } else {
-            reject(new Error('取消'))
-          }
-        },
-        needBack: needBack
-      }, replace))
+    let base = getState().data[KEY]
+    return Promise.resolve().then(() => {
+      if (base.uploadExpiration < new Date().getTime()) {
+        return Api.request(ApiSetting.uploadNeedToken, { path }).then((result) => {
+          dispatch({
+            KEY,
+            type: MAKE_CLIENT,
+            payload: {
+              value: result
+            }
+          })
+        })
+      }
+    }).then(() => {
+      if (base.uploadClient) {
+        return base.uploadClient.multipartUpload(key, file, {
+          progress
+        })
+      } else {
+        throw new Error('上传失败请重试')
+      }
+    }).catch((err) => {
+      console.log(err)
     })
   }
 }
-export const action = {
-  select
+
+export function changeSize() {
+  return (dispatch, getState) => {
+    dispatch({
+      KEY,
+      type: CHANGE_SIZE
+    })
+  }
 }
+
+export const action = {}
+  // ------------------------------------
+  // Action Handlers
+  // ------------------------------------
 const ACTION_HANDLERS = {
   [REGISTER_CALL_BACK]: (state, action) => {
     state.pageCallBack = action.payload.callBack
@@ -86,12 +108,39 @@ const ACTION_HANDLERS = {
     return {
       ...state
     }
+  },
+  [CHANGE_SIZE]: (state, action) => {
+    state.pageHeight = window.document.documentElement.clientHeight
+    state.pageWeight = window.document.documentElement.clientWeight
+    return {
+      ...state
+    }
+  },
+  [MAKE_CLIENT]: (state, action) => {
+    const result = action.payload.value
+    state.uploadClient = new OSS.Wrapper({
+      region: result.Region,
+      accessKeyId: result.AccessKeyId,
+      accessKeySecret: result.AccessKeySecret,
+      stsToken: result.SecurityToken,
+      bucket: result.Bucket
+    })
+    state.uploadExpiration = new Date(result.Expiration).getTime()
+    return {
+      ...state
+    }
   }
 }
+
+// ------------------------------------
+// Reducer
+// ------------------------------------
 export const initState = {
   pageCallBack: null,
   pageInit: null,
-  needBack: true
+  needBack: true,
+  uploadClient: null,
+  uploadExpiration: 0
 }
 export default function (state = initState, action) {
   const handler = ACTION_HANDLERS[action.type]

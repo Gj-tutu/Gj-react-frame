@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Common from '../lib/Common'
+import Common from '../services/Common'
 
 class Page extends Component {
   init = false
