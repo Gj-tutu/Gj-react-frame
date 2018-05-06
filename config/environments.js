@@ -3,7 +3,7 @@ var defaultConfig = {
     cacheDirectory: true,
     plugins: [
       ['transform-runtime', { 'polyfill': false, 'regenerator': true }],
-      ['import', { 'libraryName': 'antd', 'style': 'css' }]
+      ['import', [{ 'libraryName': 'antd', 'style': 'css' }, { 'libraryName': 'antd-mobile', 'style': 'css' }]]
     ],
     presets: ['es2015', 'react', 'stage-0']
   },

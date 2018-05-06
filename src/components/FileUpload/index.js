@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Icon, Button } from 'antd'
 import './index.less'
 import { uuid } from '../../services/Tools'
 
@@ -6,7 +7,7 @@ import { uuid } from '../../services/Tools'
  * demo
  * <FileUpload capture='camera' accept='image/*' onStart={() => {}} onEnd={() => {}} />
  */
-export default class FileUpload extends Component {
+export default class extends Component {
   constructor(props) {
     super(props)
     this.state = { uploading: false, type: props.type || 'image' }
@@ -60,25 +61,19 @@ export default class FileUpload extends Component {
         {this.state.type == 'image' ? (
           this.props.src && !this.state.uploading ? (
             <img src={this.props.src} style={{width: '100%', height: '100%'}} />
-          ) : ''
+          ) : (
+            <Icon type={this.state.uploading ? 'loading' : 'upload'} />
+          )
         ) : ''}
         {this.state.type == 'file' ? (
           <span>
+            <Button style={{marginRight: 10}}>
+              <Icon type={this.state.uploading ? 'loading' : 'upload'} /> 点击上传
+            </Button>
             {this.props.fileName}
           </span>
         ) : ''}
       </div>
     )
   }
-}
-
-FileUpload.propTypes = {
-  type: React.PropTypes.string,
-  onUpload: React.PropTypes.func,
-  onEnd: React.PropTypes.func,
-  onStart: React.PropTypes.func,
-  onProgress: React.PropTypes.func,
-  onError: React.PropTypes.func,
-  capture: React.PropTypes.string,
-  accept: React.PropTypes.string
 }
