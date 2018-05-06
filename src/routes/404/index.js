@@ -1,6 +1,7 @@
 import Common from '../../services/Common'
 export const config = {
   path: '404',
+  key: 'error',
   title: 'Page Not Found'
 }
 export default (store) => ({

@@ -16,10 +16,8 @@ export default class extends Page {
 
   renderView() {
     return (
-      <div className='error-404'>
-        <p><span>4</span><span>0</span><span>4</span></p>
-        <p className='small'><span>页</span><span>面</span><span>不</span><span>存</span><span>在</span></p>
-        <p className='small'><span>O_o</span></p>
+      <div id={config.key}>
+        error
       </div>
     )
   }

@@ -1,1 +1,2 @@
-export default []
+import template from './template'
+export default [template]
