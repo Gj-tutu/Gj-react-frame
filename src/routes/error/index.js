@@ -1,8 +1,8 @@
 import Common from '../../services/Common'
 export const config = {
-  path: '404',
+  path: '/error',
   key: 'error',
-  title: 'Page Not Found'
+  name: '错误页'
 }
 export default (store) => ({
   path: config.path,

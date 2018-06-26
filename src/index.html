@@ -12,12 +12,9 @@
 
   <meta charset="utf-8">
 
-  <% for (var i = 0; i < htmlWebpackPlugin.options.globals.scripts.length; i++) { %>
-    <script type="text/javascript" src="<%= htmlWebpackPlugin.options.globals.scripts[i] %>"></script>
-    <% } %>
 </head>
 <script>
-  ! function(e) {
+  ! function (e) {
     function t(a) {
       if (i[a]) return i[a].exports;
       var n = i[a] = {
@@ -29,13 +26,13 @@
     }
     var i = {};
     return t.m = e, t.c = i, t.p = "", t(0)
-  }([function(e, t) {
+  }([function (e, t) {
     "use strict";
     Object.defineProperty(t, "__esModule", {
       value: !0
     });
     var i = window;
-    t["default"] = i.flex = function(e, t) {
+    t["default"] = i.flex = function (e, t) {
       var a = e || 100,
         n = t || 1,
         r = i.document,
@@ -52,7 +49,7 @@
     }, e.exports = t["default"]
   }]);
   flex(100, 1);
-  window.onresize = function() {
+  window.onresize = function () {
     flex(100, 1);
   }
 </script>
@@ -62,7 +59,7 @@
   <script>
     if (!Array.prototype.findIndex) {
       Object.defineProperty(Array.prototype, "findIndex", {
-        value: function(predicate) {
+        value: function (predicate) {
           if (this === null) {
             throw new TypeError('Array.prototype.find called on null or undefined');
           }
@@ -86,7 +83,7 @@
     }
     if (!Array.prototype.fill) {
       Object.defineProperty(Array.prototype, 'fill', {
-        value: function(value) {
+        value: function (value) {
           if (this == null) {
             throw new TypeError('this is null or not defined');
           }
@@ -112,7 +109,7 @@
       });
     }
     Object.defineProperty(Array.prototype, 'has', {
-      value: function(value) {
+      value: function (value) {
         var _list = Object(this);
         var _length = _list.length >>> 0;
         for (var i = 0; i < _length; i++) {
@@ -121,7 +118,7 @@
         return -1
       }
     });
-    Date.prototype.format = function(format) {
+    Date.prototype.format = function (format) {
       if (!format) format = 'yyyy-MM-dd';
       var o = {
         'M+': this.getMonth() + 1,
@@ -138,20 +135,22 @@
       }
       return format
     };
-    Date.prototype.getRoughTime = function() {
+    Date.prototype.getRoughTime = function () {
       return Math.ceil(this.getTime() / 1000)
     };
-    Date.prototype.getDayTime = function() {
+    Date.prototype.getDayTime = function () {
       return Math.ceil(new Date(this.format()).getTime() / 1000)
     };
-    Date.nowTime = function() {
+    Date.nowTime = function () {
       return Math.ceil(Date.now() / 1000)
     };
-    Date.todayTime = function() {
+    Date.todayTime = function () {
       return Math.ceil(new Date(new Date().format()).getTime() / 1000)
     }
   </script>
-  <script type="text/javascript" src="/aliyun-oss-sdk-4.4.4.min.js"></script>
+  <% for (var i = 0; i < htmlWebpackPlugin.options.globals.scripts.length; i++) { %>
+    <script type="text/javascript" src="<%= htmlWebpackPlugin.options.globals.scripts[i] %>"></script>
+    <% } %>
 </body>
 
 </html>

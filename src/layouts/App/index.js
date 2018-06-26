@@ -1,10 +1,6 @@
-import 'normalize.css'
-import './index.less'
-
-const App = ({ children, location }) => {
-  return {
-    ...children
-  }
-}
+import '../../style/app.less'
+const App = ({ children, location }) => ({
+  ...children
+})
 
 export default App

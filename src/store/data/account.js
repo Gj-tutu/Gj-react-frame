@@ -1,5 +1,4 @@
 import Api from '../../services/Api'
-import ApiSetting from '../../services/ApiSetting'
 import Common from '../../services/Common'
 /**
  * 用户相关接口,登录缓存,状态判断等
@@ -28,7 +27,7 @@ export function demoLogin() {
 }
 export function login(email, password) {
   return (dispatch, getState) => {
-    return Api.request(ApiSetting.userLogin, { email, password }, true, false).then((result) => {
+    return Api.request({}, { email, password }, true, false).then((result) => {
       dispatch({
         KEY,
         type: USER_LOGIN,
@@ -42,7 +41,7 @@ export function login(email, password) {
 }
 export function register(email, password, firstName, lastName) {
   return (dispatch, getState) => {
-    return Api.request(ApiSetting.userRegister, { email, password, firstName, lastName }, true, false).then((result) => {
+    return Api.request({}, { email, password, firstName, lastName }, true, false).then((result) => {
       dispatch({
         KEY,
         type: USER_REGISTER,
@@ -56,7 +55,7 @@ export function register(email, password, firstName, lastName) {
 }
 export function logout() {
   return (dispatch, getState) => {
-    return Api.request(ApiSetting.userLogout, {}, true, false).then((result) => {
+    return Api.request({}, {}, true, false).then((result) => {
       dispatch({
         KEY,
         type: USER_LOGOUT,
@@ -70,7 +69,7 @@ export function logout() {
 }
 export function info() {
   return (dispatch, getState) => {
-    return Api.request(ApiSetting.userInfo, {}, false, true, false).then((result) => {
+    return Api.request({}, {}, false, true, false).then((result) => {
       dispatch({
         KEY,
         type: USER_LOGIN,
@@ -78,12 +77,6 @@ export function info() {
           value: result
         }
       })
-
-      // {
-      //   email: '',
-      //   firstName: '',
-      //   lastName: ''
-      // }
       return result
     })
   }

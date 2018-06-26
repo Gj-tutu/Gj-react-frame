@@ -1,5 +1,4 @@
 const path = require('path')
-const fs = require('fs')
 const debug = require('debug')('app:config')
 var config = require('./local')
 
@@ -16,18 +15,6 @@ config = Object.assign(config[NODE_ENV], {
   api_path: `/api`
 })
 
-function getLibPath(path) {
-  let pach = null
-  try {
-    fs.readdirSync(path).forEach(function (file) {
-      if (file.indexOf('lib') == 0) {
-        pach = file
-      }
-    })
-  } catch (e) {}
-  return pach
-}
-
 function base() {
   const args = [config.path_base].concat([].slice.call(arguments))
   return path.resolve.apply(path, args)
@@ -39,7 +26,6 @@ config.utils_paths = {
   lib: base.bind(null, config.dir_lib)
 }
 
-config.scripts.push('/' + getLibPath(config.utils_paths.lib()))
 config.globals = {
   'process.env': {
     'NODE_ENV': JSON.stringify(config.env)

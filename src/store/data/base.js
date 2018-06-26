@@ -1,6 +1,5 @@
 import { linkTo, goBack, replaceLink } from '../../services/Tools'
 import Api from '../../services/Api'
-import ApiSetting from '../../services/ApiSetting'
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -10,9 +9,9 @@ const REGISTER_CALL_BACK = 'REGISTER_CALL_BACK'
 const CALL_BACK = 'CALL_BACK'
 const CHANGE_SIZE = 'CHANGE_SIZE'
 const MAKE_CLIENT = 'MAKE_CLIENT'
-  // ------------------------------------
-  // Actions
-  // ------------------------------------
+// ------------------------------------
+// Actions
+// ------------------------------------
 
 export function registerCallBack(page, { init, callBack, needBack }, replace) {
   return (dispatch, getState) => {
@@ -55,7 +54,7 @@ export function upload(path, progress, file, key) {
     let base = getState().data[KEY]
     return Promise.resolve().then(() => {
       if (base.uploadExpiration < new Date().getTime()) {
-        return Api.request(ApiSetting.uploadNeedToken, { path }).then((result) => {
+        return Api.request({}, { path }).then((result) => {
           dispatch({
             KEY,
             type: MAKE_CLIENT,
@@ -89,9 +88,9 @@ export function changeSize() {
 }
 
 export const action = {}
-  // ------------------------------------
-  // Action Handlers
-  // ------------------------------------
+// ------------------------------------
+// Action Handlers
+// ------------------------------------
 const ACTION_HANDLERS = {
   [REGISTER_CALL_BACK]: (state, action) => {
     state.pageCallBack = action.payload.callBack

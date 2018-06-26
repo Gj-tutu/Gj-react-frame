@@ -6,6 +6,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const config = require('../config')
 const debug = require('debug')('app:webpack:config')
+const fs = require('fs')
 const paths = config.utils_paths
 const __DEV__ = config.globals.__DEV__
 const __PROD__ = config.globals.__PROD__
@@ -39,6 +40,29 @@ webpackConfig.output = {
   publicPath: config.public_path,
   chunkFilename: fileNameFormat(config.compiler_hash_type, 'js')
 }
+
+function getLibPath(path) {
+  let pach = null;
+  try {
+    fs.readdirSync(path).forEach((file) => {
+      if (file.indexOf('lib') == 0) {
+        pach = file;
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+  return pach;
+}
+
+for (let i = 0; i < config.scripts.length; i += 1) {
+  const script = config.scripts[i];
+  if (script.indexOf('http') != 0) {
+    config.scripts[i] = config.public_path + script;
+  }
+}
+
+config.scripts.push(config.public_path + getLibPath(config.utils_paths.lib()));
 
 webpackConfig.plugins = [
   new webpack.DefinePlugin(config.globals),
@@ -163,13 +187,17 @@ function loaderAnalysis(loaders) {
   return loaders
 }
 
+const theme = {
+  // 'primary-color': '#f54b37'
+}
+
 webpackConfig.module.rules.push({
   test: /\.css$/,
   use: loaderAnalysis(['style-loader', 'css-loader', 'postcss-loader'])
 })
 webpackConfig.module.rules.push({
   test: /\.less$/,
-  use: loaderAnalysis(['style-loader', 'css-loader', 'postcss-loader', 'less-loader'])
+  use: loaderAnalysis(['style-loader', 'css-loader', 'postcss-loader', `less-loader?{'modifyVars':${JSON.stringify(theme)}}`])
 })
 
 module.exports = webpackConfig
