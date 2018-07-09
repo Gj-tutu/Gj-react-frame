@@ -138,3 +138,120 @@ export function uuid(len, radix) {
   }
   return uuid.join('')
 }
+
+export function distinct(arr) {
+  let result = []
+  let i = 0
+  let j = 0
+  let len = arr.length
+  for (i = 0; i < len; i++) {
+    for (j = i + 1; j < len; j++) {
+      if (arr[i] === arr[j]) {
+        j = ++i
+      }
+    }
+    result.push(arr[i])
+  }
+  return result
+}
+
+export function SortByProps(item1, item2, props) {
+  let cps = []
+  for (let i = 0; i < props.length; i++) {
+    let prop = props[i]
+    let asc = prop.direction > 0
+    if (!item1[prop.key] && item1[prop.key] != 0) {
+      cps.push(1)
+      break
+    }
+    if (!item2[prop.key] && item2[prop.key] != 0) {
+      cps.push(-1)
+      break
+    }
+    if (prop.type == 'number') {
+      if (item1[prop.key] === item2[prop.key]) {
+        cps.push(0)
+      } else {
+        let a = item1[prop.key] == 0 ? 0 : Number(item1[prop.key]) || false
+        let b = item1[prop.key] == 0 ? 0 : Number(item2[prop.key]) || false
+        if (a === false && b === false) {
+          let result = item1[prop.key] > item2[prop.key] ? 1 : -1
+          cps.push(asc ? result : -1 * result)
+        } else if (a === false || b === false) {
+          let result = a === false ? 1 : -1
+          cps.push(asc ? result : -1 * result)
+        } else {
+          let result = a - b > 0 ? 1 : -1
+          cps.push(asc ? result : -1 * result)
+        }
+        break
+      }
+    } else {
+      if (item1[prop.key] == '') {
+        cps.push(1)
+        break
+      }
+      if (item2[prop.key] == '') {
+        cps.push(-1)
+        break
+      }
+      if (item1[prop.key] > item2[prop.key]) {
+        cps.push(asc ? 1 : -1)
+        break
+      } else if (item1[prop.key] === item2[prop.key]) {
+        cps.push(0)
+      } else {
+        cps.push(asc ? -1 : 1)
+        break
+      }
+    }
+  }
+
+  for (let j = 0; j < cps.length; j++) {
+    if (cps[j] === 1 || cps[j] === -1) {
+      return cps[j]
+    }
+  }
+  return false
+}
+
+export function getCacheData(key, time, original, force) {
+  let data
+  if (!force) {
+    data = window.appCache.getCache(key + '_data')
+  }
+  if (data) {
+    return Promise.resolve(data)
+  } else {
+    try {
+      return original().then((result) => {
+        window.appCache.setCache(key + '_data', result, time)
+        return result
+      })
+    } catch (err) {
+      console.log('original get error')
+      return Promise.reject(err)
+    }
+  }
+}
+
+export function searchKeyword(data, key, keyword, limit) {
+  const list = []
+  const tmp = {}
+  for (let i = 0; i < data.length; i += 1) {
+    if (data[i][key] && !tmp[data[i][key]] && data[i][key].indexOf(keyword) >= 0) {
+      list.push(data[i][key])
+      tmp[data[i][key]] = true
+      if (limit && list.length >= limit) break
+    }
+  }
+  return list
+}
+
+export function getMap(list, key = 'value', value = 'label') {
+  const map = {}
+  for (let i = 0; i < list.length; i += 1) {
+    map[list[i][key]] = list[i][value]
+  }
+  return map
+}
