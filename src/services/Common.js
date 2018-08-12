@@ -3,15 +3,22 @@ import { connect } from 'react-redux'
 import { browserHistory } from 'react-router'
 import * as account from '../store/data/account'
 import * as base from '../store/data/base'
+import { replaceLink } from './Tools'
 
 var Common = {
   allowInit(config) {
     return true
   },
-  pageChange(e) {},
-  pageChangeEnd() {},
+  pageChange(e) { },
+  pageChangeEnd() { },
   pageEnter(config, store, props, replace) {
-
+    this.store = store
+    if (config.needLogin) {
+      if (!account.isLogin(store)) {
+        this.goToLogin()
+        return
+      }
+    }
   },
   pageReplace(config, location, user) {
 
@@ -48,6 +55,13 @@ var Common = {
     } else {
       cb(null, page)
     }
+  },
+  goToLogin() {
+    setTimeout(() => {
+      if (this.store) {
+        replaceLink('/login')
+      }
+    }, 1)
   },
   locationNum: 0,
   isCallBack: false,

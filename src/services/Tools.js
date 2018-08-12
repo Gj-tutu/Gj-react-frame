@@ -1,7 +1,8 @@
+import { ListView } from 'antd-mobile'
+import { browserHistory } from 'react-router'
 /**
  * 工具类
  */
-import { browserHistory } from 'react-router'
 export const setDocumentTitle = (title) => {
   /**
    * 修改浏览器title 兼容ios
@@ -57,13 +58,13 @@ export const linkTo = (link) => {
   /**
    * 跳转页面
    */
-  location.href = link
+  browserHistory.push(link)
 }
 export const toLink = (link) => {
   /**
    * 跳转页面
    */
-  browserHistory.push(link)
+  location.href = link
 }
 export const replaceLink = (link) => {
   /**
@@ -139,72 +140,35 @@ export function uuid(len, radix) {
   return uuid.join('')
 }
 
-export function distinct(arr) {
-  let result = []
-  let i = 0
-  let j = 0
-  let len = arr.length
-  for (i = 0; i < len; i++) {
-    for (j = i + 1; j < len; j++) {
-      if (arr[i] === arr[j]) {
-        j = ++i
-      }
-    }
-    result.push(arr[i])
+export function SortBy(a, b, asc, type) {
+  if (!a && a != 0) {
+    return 1
   }
-  return result
+  if (!b && b != 0) {
+    return -1
+  }
+  if (a === b) {
+    return 0
+  }
+  if (a == '') {
+    return 1
+  }
+  if (b == '') {
+    return -1
+  }
+  a = `${a}`
+  b = `${b}`
+  return (type == 'number'
+    ? a.localeCompare(b, undefined, { numeric: true })
+    : a.localeCompare(b, 'zh', { co: 'pinyin' })) * asc
 }
 
 export function SortByProps(item1, item2, props) {
   let cps = []
   for (let i = 0; i < props.length; i++) {
     let prop = props[i]
-    let asc = prop.direction > 0
-    if (!item1[prop.key] && item1[prop.key] != 0) {
-      cps.push(1)
-      break
-    }
-    if (!item2[prop.key] && item2[prop.key] != 0) {
-      cps.push(-1)
-      break
-    }
-    if (prop.type == 'number') {
-      if (item1[prop.key] === item2[prop.key]) {
-        cps.push(0)
-      } else {
-        let a = item1[prop.key] == 0 ? 0 : Number(item1[prop.key]) || false
-        let b = item1[prop.key] == 0 ? 0 : Number(item2[prop.key]) || false
-        if (a === false && b === false) {
-          let result = item1[prop.key] > item2[prop.key] ? 1 : -1
-          cps.push(asc ? result : -1 * result)
-        } else if (a === false || b === false) {
-          let result = a === false ? 1 : -1
-          cps.push(asc ? result : -1 * result)
-        } else {
-          let result = a - b > 0 ? 1 : -1
-          cps.push(asc ? result : -1 * result)
-        }
-        break
-      }
-    } else {
-      if (item1[prop.key] == '') {
-        cps.push(1)
-        break
-      }
-      if (item2[prop.key] == '') {
-        cps.push(-1)
-        break
-      }
-      if (item1[prop.key] > item2[prop.key]) {
-        cps.push(asc ? 1 : -1)
-        break
-      } else if (item1[prop.key] === item2[prop.key]) {
-        cps.push(0)
-      } else {
-        cps.push(asc ? -1 : 1)
-        break
-      }
-    }
+    let asc = prop.direction > 0 ? 1 : -1
+    cps.push(SortBy(item1[prop.key], item2[prop.key], asc, prop.type))
   }
 
   for (let j = 0; j < cps.length; j++) {
@@ -214,18 +178,19 @@ export function SortByProps(item1, item2, props) {
   }
   return false
 }
-
-export function getCacheData(key, time, original, force) {
-  let data
-  if (!force) {
-    data = window.appCache.getCache(key + '_data')
+export function getCacheData(original, { key = null, time = 0, local = false, force = false }) {
+  let data = null
+  if (!force && key) {
+    data = window.appCache.getCache(key + '_data', local)
   }
   if (data) {
     return Promise.resolve(data)
   } else {
     try {
       return original().then((result) => {
-        window.appCache.setCache(key + '_data', result, time)
+        if (key) {
+          window.appCache.setCache(key + '_data', result, time, local)
+        }
         return result
       })
     } catch (err) {
@@ -235,13 +200,22 @@ export function getCacheData(key, time, original, force) {
   }
 }
 
+export function setCacheData(key, time, data) {
+  window.appCache.setCache(key + '_data', data, time)
+}
+
+export function clearCacheData(key) {
+  window.appCache.removeCache(key + '_data')
+}
+
 export function searchKeyword(data, key, keyword, limit) {
   const list = []
   const tmp = {}
   for (let i = 0; i < data.length; i += 1) {
-    if (data[i][key] && !tmp[data[i][key]] && data[i][key].indexOf(keyword) >= 0) {
-      list.push(data[i][key])
-      tmp[data[i][key]] = true
+    let item = key ? data[i][key] : data[i]
+    if (item && !tmp[item] && item.indexOf(keyword) >= 0) {
+      list.push(item)
+      tmp[item] = true
       if (limit && list.length >= limit) break
     }
   }
@@ -254,4 +228,192 @@ export function getMap(list, key = 'value', value = 'label') {
     map[list[i][key]] = list[i][value]
   }
   return map
+}
+
+const getSectionData = (dataBlob, sectionID) => dataBlob[sectionID]
+const getRowData = (dataBlob, sectionID, rowID) => dataBlob[rowID]
+export const NewDataSource = function () {
+  return new ListView.DataSource({
+    getRowData,
+    getSectionHeaderData: getSectionData,
+    rowHasChanged: (row1, row2) => { return row1 !== row2 },
+    sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+  })
+}
+
+export function getMap(list, key = 'value', value = null) {
+  const map = {}
+  for (let i = 0; i < list.length; i += 1) {
+    map[list[i][key]] = value ? list[i][value] : list[i]
+  }
+  return map
+}
+export const ListData = function (field = 'id') {
+  this.field = field
+  this.maxSectionId = 0
+  this.maxSectionId = 0
+  this.loading = false
+  this.bottom = false
+  this.top = false
+  this.dataSource = NewDataSource()
+  this.dataBlob = {}
+  this.sectionIDs = []
+  this.rowIDs = []
+  this.count = -1
+  this.total = 0
+  this.dataSource = NewDataSource().cloneWithRowsAndSections(this.dataBlob, this.sectionIDs, this.rowIDs)
+}
+
+ListData.prototype.refresh = function () {
+  this.sectionIDs = []
+  this.rowIDs = []
+  this.dataBlob = {}
+  this.maxSectionId = 0
+  this.maxSectionId = 0
+  this.loading = false
+  this.bottom = false
+  this.top = false
+  this.total = 0
+  this.dataSource = NewDataSource().cloneWithRowsAndSections(this.dataBlob, this.sectionIDs, this.rowIDs)
+}
+
+ListData.prototype.append = function (sectionId, data, preNumber) {
+  let dataNum = data.length
+  let ids = []
+  for (let i = 0; i < dataNum; i++) {
+    let item = data[i]
+    let id = `${sectionId}:${item[this.field]}`
+    this.dataBlob[id] = item
+    ids.push(id)
+  }
+  let index = this.sectionIDs.indexOf(sectionId)
+  if (index >= 0) {
+    this.rowIDs[index] = ids
+  } else {
+
+  }
+  this.sectionIDs = [sectionId].concat(this.sectionIDs)
+  this.rowIDs = [ids].concat(this.rowIDs)
+  this.dataSource = this.dataSource.cloneWithRowsAndSections(this.dataBlob, this.sectionIDs, this.rowIDs)
+  this.minSectionId = sectionId
+  this.loading = false
+  // console.log('append', data, preNumber)
+  if (dataNum < preNumber) {
+    this.top = true
+    if (this.sectionIDs.length == 1) this.bottom = true
+  }
+  this.total += dataNum
+}
+ListData.prototype.push = function (sectionId, data, preNumber) {
+  // console.log('push', sectionId, data, preNumber)
+  let dataNum = data.length
+  let ids = []
+  for (let i = 0; i < dataNum; i++) {
+    let item = data[i]
+    let id = `${sectionId}:${item[this.field]}`
+    this.dataBlob[id] = item
+    ids.push(id)
+  }
+  let index = this.sectionIDs.indexOf(sectionId)
+  if (index >= 0) {
+    this.rowIDs[index] = ids
+  } else {
+    this.sectionIDs.push(sectionId)
+    this.rowIDs.push(ids)
+    this.sectionIDs = [].concat(this.sectionIDs)
+    this.rowIDs = [].concat(this.rowIDs)
+  }
+
+  this.dataSource = this.dataSource.cloneWithRowsAndSections(this.dataBlob, this.sectionIDs, this.rowIDs)
+  this.maxSectionId = sectionId
+  this.loading = false
+  if (dataNum < preNumber) {
+    this.bottom = true
+    if (this.sectionIDs.length == 1) this.top = true
+  }
+  this.total += dataNum
+}
+ListData.prototype.pop = function () {
+  console.log('pop', this.sectionIDs.length)
+  if (this.sectionIDs.length == 0) return
+  this.sectionIDs.pop()
+  this.sectionIDs = [].concat(this.sectionIDs)
+  let ids = this.rowIDs.pop()
+  ids.forEach((row) => { delete this.dataBlob[row] })
+  this.dataSource = this.dataSource.cloneWithRowsAndSections(this.dataBlob, this.sectionIDs, this.rowIDs)
+  this.maxSectionId = this.sectionIDs[this.sectionIDs.length - 1]
+  this.bottom = false
+  this.total -= ids.length
+}
+ListData.prototype.shift = function () {
+  console.log('shift', this.sectionIDs.length)
+  if (this.sectionIDs.length == 0) return
+  this.sectionIDs.pop()
+  this.sectionIDs = [].concat(this.sectionIDs)
+  let ids = this.rowIDs.pop()
+  ids.forEach((row) => { delete this.dataBlob[row] })
+  this.dataSource = this.dataSource.cloneWithRowsAndSections(this.dataBlob, this.sectionIDs, this.rowIDs)
+  this.minSectionId = this.sectionIDs[0]
+  this.top = false
+  this.total -= ids.length
+}
+ListData.prototype.get = function (sectionId, value, preNumber) {
+  this.count = value.count
+  return this.push(sectionId, value.list, preNumber)
+}
+ListData.prototype.load = function () {
+  this.loading = true
+}
+ListData.prototype.delete = function (sectionId, rowId) {
+  let index = this.sectionIDs.indexOf(sectionId)
+  if (index == -1) return
+  this.rowIDs = [].concat(this.rowIDs)
+  this.rowIDs[index] = this.rowIDs[index].filter((row) => row != rowId)
+  delete this.dataBlob[rowId]
+  this.dataSource = this.dataSource.cloneWithRowsAndSections(this.dataBlob, this.sectionIDs, this.rowIDs)
+  this.total -= 1
+}
+ListData.prototype.update = function (sectionId, item) {
+  let index = this.sectionIDs.indexOf(sectionId)
+  if (index == -1) return
+  let id = `${sectionId}:${item[this.field]}`
+  let tmp = {}
+  Object.assign(tmp, item)
+  this.dataBlob[id] = tmp
+  this.refresh()
+}
+ListData.prototype._add = function (sectionId, item) {
+  let index = this.sectionIDs.indexOf(sectionId)
+  if (index == -1) return
+  let id = `${sectionId}:${item[this.field]}`
+  this.rowIDs[index].push(id)
+  this.rowIDs = [].concat(this.rowIDs)
+
+  this.dataBlob[id] = item
+  this.dataSource = this.dataSource.cloneWithRowsAndSections(this.dataBlob, this.sectionIDs, this.rowIDs)
+  this.total += 1
+}
+ListData.prototype.add = function (value, preNumber) {
+  let push = false
+  if (!value || value.length == 0) return
+  if (this.sectionIDs.length > 0) {
+    let sectionId = this.sectionIDs[this.sectionIDs.length - 1]
+    let rowNumber = this.rowIDs[this.sectionIDs.length - 1].length
+    if (rowNumber < preNumber) {
+      value.splice(0, preNumber - rowNumber).forEach((row) => {
+        this._add(sectionId, row)
+      })
+    } else {
+      push = true
+    }
+  } else {
+    push = true
+  }
+  if (push && value.length > 0) {
+    let ids = value.map(row => row.id)
+    this.push(Math.min.apply(null, ids), value, preNumber)
+  }
+}
+ListData.prototype.refresh = function () {
+  this.dataSource = NewDataSource().cloneWithRowsAndSections(this.dataBlob, this.sectionIDs, this.rowIDs)
 }

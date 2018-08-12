@@ -1,7 +1,7 @@
 /**
  * http请求封装类
  */
-import { load, loaded, fail } from './Events'
+import { load, loaded, fail, offline, toast } from './Events'
 import Common from './Common'
 const Request = require('superagent')
 
@@ -13,6 +13,12 @@ export const FORM = 'formData'
 export const UPLOAD = 'formField'
 export const ApiPath = __API_PATH__
 
+function OfflineError() {
+  const error = new Error('网络不给力，请重试')
+  error.Type = 'offline'
+  return error
+}
+
 class Api {
   static get(url, data, loadOption) {
     return Api.request({ url, method: GET }, data, loadOption)
@@ -23,7 +29,7 @@ class Api {
   static form(url, data, loadOption) {
     return Api.request({ url, method: POST, type: FORM }, data, loadOption)
   }
-  static request(api, data, loadOption = {}) {
+  static request(api, data = {}, loadOption = {}) {
     /**
      * 封装对外接口
      */
@@ -65,13 +71,11 @@ class Api {
           request.send(data)
         }
       }
-      if (option.data.token !== false) {
-        request.set('token', window.appCache.getCache('token', true))
-      }
+      request.set('X-Client-Token', window.appCache.getCache('token', true))
       request.timeout(30 * 1000)
         .end((error, response) => {
           if (error) {
-            reject(new Error('网络不给力，请重试'))
+            reject(new OfflineError())
           } else {
             resolve(response)
           }
@@ -88,23 +92,27 @@ class Api {
         if (response.ok) {
           return response.body
         } else {
-          throw new Error('网络请求错误，请重试')
+          throw new OfflineError()
         }
       }).then((data) => {
+        if (showLoad) loaded(false)
         if (data.code === 0) {
-          if (showLoad) loaded(showLoaded, loadedText)
+          if (data.message) toast(data.message)
           return data.data
         } else {
-          if (data.code == 18) {
-            if (showLoad) loaded(false)
-            Common.goToLogin()
+          if (data.code == 30001) {
             showFail = false
+            Common.goToLogin()
           }
-          throw new Error(data.msg)
+          throw new Error(data.message)
         }
       }).catch((error) => {
         if (showLoad) loaded(false)
-        if (showFail) fail(error.message)
+        if (showFail) error.type == 'offline' ? offline(error.message) : fail(error.message)
+        throw error
+      }).finally(() => {
+      }).end((result) => {
+      }).except((error) => {
         if (__DEBUG__) console.log(error)
         throw error
       })

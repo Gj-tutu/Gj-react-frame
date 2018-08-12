@@ -21,6 +21,12 @@ export function toast(text, time) {
    */
   eventEmit('toast', text, time)
 }
+export function success(text, time) {
+  /**
+   * 通知
+   */
+  eventEmit('success', text, time)
+}
 export function fail(text, time) {
   /**
    * 错误

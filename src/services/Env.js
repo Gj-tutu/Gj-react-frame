@@ -55,6 +55,49 @@ class Env {
     window.appEvent = new events.EventEmitter()
     window.appCache = new CacheManage()
     window.Promise = require('promise')
+
+    window.Promise.prototype.finally = function (callback) {
+      let P = this.constructor
+      return this.then(
+        value => P.resolve(callback()).then(() => value),
+        reason => P.resolve(callback()).then(() => { throw reason })
+      )
+    }
+    window.Promise.prototype.end = function (callback) {
+      Promise.resolve().then(() => {
+        return this
+      }).then((result) => {
+        callback(result)
+        return result
+      })
+      return this
+    }
+    window.Promise.prototype.except = function (callback) {
+      Promise.resolve().then(() => {
+        return this
+      }).catch((err) => {
+        callback(err)
+        throw err
+      })
+      return this
+    }
+    window.Date.prototype.format = function (format) {
+      if (!format) format = 'yyyy-MM-dd'
+      var o = {
+        'M+': this.getMonth() + 1,
+        'd+': this.getDate(),
+        'h+': this.getHours(),
+        'm+': this.getMinutes(),
+        's+': this.getSeconds(),
+        'q+': Math.floor((this.getMonth() + 3) / 3),
+        'S': this.getMilliseconds()
+      }
+      if (/(y+)/.test(format)) format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
+      for (var k in o) {
+        if (new RegExp('(' + k + ')').test(format)) format = format.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+      }
+      return format
+    }
   }
 }
 export default new Env(window)

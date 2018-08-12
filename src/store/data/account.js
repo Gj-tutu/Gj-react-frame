@@ -15,16 +15,7 @@ export function isLogin(store) {
 export function getInfo(store) {
   return store.getState().data[KEY].info
 }
-export function demoLogin() {
-  Common.alreadyLogin()
-  return {
-    KEY,
-    type: USER_LOGIN,
-    payload: {
-      value: null
-    }
-  }
-}
+
 export function login(email, password) {
   return (dispatch, getState) => {
     return Api.request({}, { email, password }, true, false).then((result) => {

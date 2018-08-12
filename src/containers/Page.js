@@ -110,15 +110,48 @@ class Page extends Component {
      */
     return Common.locationHistory
   }
-  confirm(title, content, okText, noText, okFunc, noFunc) {
-    /**
-     * 确认对话框
-     */
+
+  confirm(title, content, okText, okFunc, cancelText, cancelFunc) {
+    Modal.confirm({
+      title: title,
+      content: content,
+      okText,
+      onOk() {
+        if (okFunc) okFunc()
+      },
+      cancelText,
+      onCancel() {
+        if (cancelFunc) cancelFunc()
+      }
+    })
   }
-  alert(title, content, text, func) {
-    /**
-     * 警告对话框
-     */
+
+  info(title, content) {
+    Modal.info({
+      title: title,
+      content: content
+    })
+  }
+
+  success(title, content) {
+    Modal.success({
+      title: title,
+      content: content
+    })
+  }
+
+  error(title, content) {
+    Modal.error({
+      title: title,
+      content: content
+    })
+  }
+
+  warning(title, content) {
+    Modal.warning({
+      title: title,
+      content: content
+    })
   }
   render() {
     if (Common.allowInit(this.config)) {
